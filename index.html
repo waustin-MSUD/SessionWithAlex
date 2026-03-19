@@ -105,6 +105,98 @@ var LZString=function(){var r=String.fromCharCode,o="ABCDEFGHIJKLMNOPQRSTUVWXYZa
 		<div id="init-loading"><div>Loading&hellip;</div></div>
 	</div>
 	<tw-storydata name="Session with Alex" startnode="3" creator="Twine" creator-version="2.11.0" format="SugarCube" format-version="2.37.3" ifid="EED9C9F2-8714-4CCD-BC08-8DC434736001" options="" tags="" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">/* =========================================================
+   Theme Variables
+   Change these to update the light/dark color schemes
+   ========================================================= */
+
+:root {
+	/* Core accent/surface colors */
+	--color-primary-dark: #336060;      /* main teal for panels/cards with white text */
+	--color-primary-light: #8fbfbf;     /* lighter accent teal for labels/details */
+	--color-primary-bg: rgba(51, 96, 96, 0.08);
+	--color-primary-bg-strong: rgba(51, 96, 96, 0.12);
+
+	/* Neutrals */
+	--color-text: #111;
+	--color-bg: #f3f3f3;
+	--color-surface: #ffffff;
+	--color-surface-alt: #fafafa;
+
+	/* Borders */
+	--color-border: #222;
+	--color-border-light: #ddd;
+	--color-border-mid: #444;
+	--color-border-soft: #e0e0e0;
+
+	/* Dialog */
+	--color-dialog-titlebar-bg: #1f1f1f;
+	--color-dialog-titlebar-text: #f5f5f5;
+
+	/* Dark theme neutrals */
+	--color-dark-bg: #121212;
+	--color-dark-panel: #1b1b1b;
+	--color-dark-surface: #242424;
+	--color-dark-surface-alt: #1e1e1e;
+	--color-dark-hover: #2e2e2e;
+	--color-dark-hover-strong: #333;
+
+	/* Utilities */
+	--color-focus: #1a73e8;
+	--color-shadow: rgba(0, 0, 0, 0.15);
+	--color-white: #fff;
+
+	/* Status colors */
+	--color-success: #2ea043;
+	--color-success-bg: rgba(46, 160, 67, 0.2);
+
+	--color-warning: #8a6700;
+	--color-warning-bg: rgba(210, 153, 34, 0.2);
+
+	--color-danger: #da3633;
+	--color-danger-bg: rgba(218, 54, 51, 0.2);
+}
+
+body.theme-dark {
+	--color-primary-dark: #336060;
+	--color-primary-light: #8fbfbf;
+	--color-primary-bg: rgba(51, 96, 96, 0.12);
+	--color-primary-bg-strong: rgba(51, 96, 96, 0.16);
+
+	--color-text: #f5f5f5;
+	--color-bg: #121212;
+	--color-surface: #242424;
+	--color-surface-alt: #1e1e1e;
+
+	--color-border: #ddd;
+	--color-border-light: #ddd;
+	--color-border-mid: #444;
+	--color-border-soft: #444;
+
+	--color-dialog-titlebar-bg: #1f1f1f;
+	--color-dialog-titlebar-text: #f5f5f5;
+
+	--color-dark-bg: #121212;
+	--color-dark-panel: #1b1b1b;
+	--color-dark-surface: #242424;
+	--color-dark-surface-alt: #1e1e1e;
+	--color-dark-hover: #2e2e2e;
+	--color-dark-hover-strong: #333;
+
+	--color-focus: #1a73e8;
+	--color-shadow: rgba(0, 0, 0, 0.15);
+	--color-white: #fff;
+
+	--color-success: #2ea043;
+	--color-success-bg: rgba(46, 160, 67, 0.2);
+
+	--color-warning: #8a6700;
+	--color-warning-bg: rgba(210, 153, 34, 0.2);
+
+	--color-danger: #da3633;
+	--color-danger-bg: rgba(218, 54, 51, 0.2);
+}
+
+/* =========================================================
    Base Reset / SugarCube Cleanup
    ========================================================= */
 
@@ -126,8 +218,8 @@ body,
 html,
 body {
 	font-family: Arial, Helvetica, sans-serif;
-	background: #f3f3f3;
-	color: #111;
+	background: var(--color-bg);
+	color: var(--color-text);
 }
 
 /* Fully hide SugarCube UI bar */
@@ -191,24 +283,21 @@ body.font-dyslexic {
 body.text-small .passage-text,
 body.text-small .noshell-card,
 body.text-small .choices a,
-body.text-small .ui-btn,
-body.text-small .utility-box {
+body.text-small .ui-btn{
 	font-size: 1rem;
 }
 
 body.text-medium .passage-text,
 body.text-medium .noshell-card,
 body.text-medium .choices a,
-body.text-medium .ui-btn,
-body.text-medium .utility-box {
+body.text-medium .ui-btn{
 	font-size: 1.15rem;
 }
 
 body.text-large .passage-text,
 body.text-large .noshell-card,
 body.text-large .choices a,
-body.text-large .ui-btn,
-body.text-large .utility-box {
+body.text-large .ui-btn{
 	font-size: 1.3rem;
 }
 
@@ -286,17 +375,17 @@ body.text-large .story-title {
 .settings-actions button {
 	font: inherit;
 	padding: 0.7rem 1rem;
-	border: 2px solid #222;
+	border: 2px solid var(--color-border);
 	border-radius: 0.75rem;
-	background: #fff;
-	color: #111;
+	background: var(--color-surface);
+	color: var(--color-text);
 	cursor: pointer;
 }
 
 body.theme-dark .settings-actions button {
-	background: #2e2e2e;
-	color: #f5f5f5;
-	border-color: #ddd;
+	background: var(--color-dark-hover);
+	color: var(--color-text);
+	border-color: var(--color-border-light);
 }
 
 
@@ -306,7 +395,7 @@ body.theme-dark .settings-actions button {
    ========================================================= */
 
 #ui-dialog {
-	color: #111;
+	color: var(--color-text);
 }
 
 #ui-dialog-titlebar {
@@ -314,13 +403,13 @@ body.theme-dark .settings-actions button {
 	align-items: center;
 	justify-content: space-between;
 	padding: 0.75rem 1rem;
-	background: #1f1f1f !important;
-	color: #f5f5f5 !important;
-	border-bottom: 1px solid #444 !important;
+	background: var(--color-dialog-titlebar-bg) !important;
+	color: var(--color-dialog-titlebar-text) !important;
+	border-bottom: 1px solid var(--color-border-mid) !important;
 }
 
 #ui-dialog-title {
-	color: #f5f5f5 !important;
+	color: var(--color-dialog-titlebar-text) !important;
 	text-transform: none !important;
 	letter-spacing: normal !important;
 	font-weight: 600;
@@ -339,15 +428,15 @@ body.theme-dark .settings-actions button {
 #ui-dialog-titlebar-close *,
 #ui-dialog-titlebar-close svg,
 #ui-dialog-titlebar-close path {
-	color: #f5f5f5 !important;
-	fill: #f5f5f5 !important;
-	stroke: #f5f5f5 !important;
+	color: var(--color-dialog-titlebar-text) !important;
+	fill: var(--color-dialog-titlebar-text) !important;
+	stroke: var(--color-dialog-titlebar-text) !important;
 	opacity: 1 !important;
 }
 
 #ui-dialog-body {
-	background: #ffffff;
-	color: #111;
+	background: var(--color-surface);
+	color: var(--color-text);
 }
 
 #ui-dialog-body a,
@@ -361,16 +450,16 @@ body.theme-dark .settings-actions button {
 }
 
 #ui-dialog-body input[type="radio"] {
-	accent-color: #1a73e8;
+	accent-color: var(--color-focus);
 }
 
 body.theme-dark #ui-dialog {
-	color: #f5f5f5;
+	color: var(--color-text);
 }
 
 body.theme-dark #ui-dialog-body {
-	background: #242424;
-	color: #f5f5f5;
+	background: var(--color-dark-surface);
+	color: var(--color-text);
 }
 
 body.theme-dark #ui-dialog-body a,
@@ -397,7 +486,7 @@ body.theme-dark #ui-dialog-body p {
 	box-sizing: border-box;
 	line-height: normal;
 	font-size: 16px;
-	background: #f3f3f3;
+	background: var(--color-bg);
 }
 
 /* Default card for intro, credits, and shorter content */
@@ -406,12 +495,12 @@ body.theme-dark #ui-dialog-body p {
 	max-height: 90vh;
 	overflow-y: auto;
 	overflow-x: hidden;
-	background: #336060;
-	color: #fff;
+	background: var(--color-primary-dark);
+	color: var(--color-white);
 	border-radius: 1.5rem;
 	padding: 2rem;
 	box-sizing: border-box;
-	box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.15);
+	box-shadow: 0 0.75rem 2rem var(--color-shadow);
 }
 
 /* Wider card for recap or text-heavy content */
@@ -456,9 +545,9 @@ body.theme-dark #ui-dialog-body p {
 	display: inline-block;
 	margin-top: 1rem;
 	padding: 0.8rem 1.25rem;
-	border: 2px solid #fff;
+	border: 2px solid var(--color-white);
 	border-radius: 0.9rem;
-	color: #fff;
+	color: var(--color-white);
 	text-decoration: none;
 	font-weight: 600;
 	background: transparent;
@@ -467,7 +556,7 @@ body.theme-dark #ui-dialog-body p {
 .passage .noshell-card a:hover,
 .passage .noshell-card a:focus-visible {
 	background: rgba(255, 255, 255, 0.14);
-	outline: 3px solid #1a73e8;
+	outline: 3px solid var(--color-focus);
 	outline-offset: 3px;
 }
 
@@ -486,7 +575,7 @@ body.theme-dark #ui-dialog-body p {
 }
 
 body.theme-dark .passage .noshell-page {
-	background: #121212;
+	background: var(--color-dark-bg);
 }
 /* =========================================================
    Main Layout
@@ -515,8 +604,8 @@ body.theme-dark .passage .noshell-page {
 
 /* Left panel */
 .story-left {
-	background: #336060;
-	color: #fff;
+	background: var(--color-primary-dark);
+	color: var(--color-white);
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -526,8 +615,8 @@ body.theme-dark .passage .noshell-page {
 
 /* Right panel */
 .story-right {
-	background: #f3f3f3;
-	color: #111;
+	background: var(--color-bg);
+	color: var(--color-text);
 	display: flex;
 	flex-direction: column;
 }
@@ -682,10 +771,10 @@ body.theme-dark .passage .noshell-page {
 	align-items: center;
 	gap: 0.85rem;
 	padding: 1.2rem 1.25rem;
-	border: 2px solid #222;
+	border: 2px solid var(--color-border);
 	border-radius: 1rem;
-	background: #fff;
-	color: #111;
+	background: var(--color-surface);
+	color: var(--color-text);
 	text-decoration: none;
 	font-size: 1.1rem;
 	line-height: 1.4;
@@ -705,23 +794,9 @@ body.theme-dark .passage .noshell-page {
 	background: #f0f0f0;
 	border-color: #000;
 	transform: translateY(-1px);
-	outline: 3px solid #1a73e8;
+	outline: 3px solid var(--color-focus);
 	outline-offset: 4px;
 }
-
-
-/* =========================================================
-   Utility / Help Box
-   ========================================================= */
-
-.utility-box {
-	margin-top: 3rem;
-	padding: 1rem 1.25rem;
-	border: 2px solid #222;
-	border-radius: 1rem;
-	background: #fff;
-}
-
 
 /* =========================================================
    Accessibility / Focus States
@@ -730,37 +805,36 @@ body.theme-dark .passage .noshell-page {
 a:focus-visible,
 button:focus-visible,
 .ui-btn:focus-visible {
-	outline: 3px solid #1a73e8;
+	outline: 3px solid var(--color-focus);
 	outline-offset: 3px;
 }
 
 /* Theme: dark */
 body.theme-dark {
-	background: #121212;
-	color: #f5f5f5;
+	background: var(--color-dark-bg);
+	color: var(--color-text);
 }
 
 body.theme-dark .story-right {
-	background: #1b1b1b;
-	color: #f5f5f5;
+	background: var(--color-dark-panel);
+	color: var(--color-text);
 }
 
-body.theme-dark .choices a,
-body.theme-dark .utility-box {
-	background: #242424;
-	color: #f5f5f5;
-	border-color: #ddd;
+body.theme-dark .choices a {
+	background: var(--color-dark-surface);
+	color: var(--color-text);
+	border-color: var(--color-border-light);
 }
 
 body.theme-dark .story-right .ui-btn:hover,
 body.theme-dark .story-right .ui-btn:focus-visible {
-	background: #2e2e2e;
+	background: var(--color-dark-hover);
 }
 
 body.theme-dark .choices a:hover,
 body.theme-dark .choices a:focus-visible {
-	background: #333;
-	border-color: #fff;
+	background: var(--color-dark-hover-strong);
+	border-color: var(--color-white);
 }
 
 
@@ -823,54 +897,54 @@ body.theme-dark .choices a:focus-visible {
 	font-weight: 700;
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
-	color: #336060;
+	color: var(--color-primary-dark);
 	margin-bottom: 0.5rem;
 }
 
 body.theme-dark .scene-label {
-	color: #8fbfbf;
+	color: var(--color-primary-light);
 }
 
 /* Blockquotes for client dialogue */
 .passage-text blockquote {
 	margin: 1.25rem 0;
 	padding: 1rem 1.25rem;
-	border-left: 4px solid #336060;
-	background: rgba(111, 156, 156, 0.06);
+	border-left: 4px solid var(--color-primary-dark);
+	background: var(--color-primary-bg);
 	border-radius: 0 0.75rem 0.75rem 0;
 	font-style: italic;
 	line-height: 1.7;
 }
 
 body.theme-dark .passage-text blockquote {
-	background: rgba(111, 156, 156, 0.1);
-	border-left-color: #8fbfbf;
+	background: var(--color-primary-bg-strong);
+	border-left-color: var(--color-primary-light);
 }
 
 /* Counselor response callout */
 .counselor-response {
 	padding: 0.75rem 1rem;
-	background: rgba(111, 156, 156, 0.08);
+	background: var(--color-primary-bg);
 	border-radius: 0.75rem;
 	margin-bottom: 1rem;
 }
 
 body.theme-dark .counselor-response {
-	background: rgba(111, 156, 156, 0.12);
+	background: var(--color-primary-bg-strong);
 }
 
 /* Feedback note box */
 .feedback-note {
 	margin: 1.5rem 0;
 	padding: 1rem 1.25rem;
-	border: 2px solid #ddd;
+	border: 2px solid var(--color-border-light);
 	border-radius: 1rem;
-	background: #fafafa;
+	background: var(--color-surface-alt);
 }
 
 body.theme-dark .feedback-note {
-	background: #1e1e1e;
-	border-color: #444;
+	background: var(--color-dark-surface-alt);
+	border-color: var(--color-border-mid);
 }
 
 .feedback-summary {
@@ -886,7 +960,7 @@ body.theme-dark .feedback-note {
 
 .feedback-detail summary {
 	cursor: pointer;
-	color: #336060;
+	color: var(--color-primary-dark);
 	font-weight: 600;
 	font-size: 0.95rem;
 	padding: 0.25rem 0;
@@ -912,19 +986,19 @@ details.feedback-detail[open] summary::before {
 }
 
 body.theme-dark .feedback-detail summary {
-	color: #8fbfbf;
+	color: var(--color-primary-light);
 }
 
 .feedback-expanded {
 	margin-top: 0.75rem;
 	padding-top: 0.75rem;
-	border-top: 1px solid #e0e0e0;
+	border-top: 1px solid var(--color-border-soft);
 	font-size: 0.95rem;
 	line-height: 1.7;
 }
 
 body.theme-dark .feedback-expanded {
-	border-top-color: #444;
+	border-top-color: var(--color-border-mid);
 }
 
 .feedback-expanded p {
@@ -946,6 +1020,7 @@ body.theme-dark .feedback-expanded {
 	border-bottom: none;
 }
 
+.recap-section h2,
 .recap-section h3 {
 	margin: 0 0 0.5rem 0;
 	font-size: 1.1rem;
@@ -961,29 +1036,54 @@ body.theme-dark .feedback-expanded {
 	line-height: 1.6;
 }
 
+.recap-rating-line {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+	margin: 0.75rem 0 0 0;
+}
+
 .recap-quality {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: var(--color-white);
+	font-weight: 600;
+	vertical-align: middle;
+}
+
+.recap-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 1.5rem;
+	height: 1.5rem;
+	border-radius: 50%;
+	background: var(--color-white);
+	font-size: 1.2rem;
+	line-height: 1;
+	font-weight: 900;
+	flex: 0 0 auto;
+}
+
+.recap-label {
 	display: inline-block;
-	padding: 0.3rem 0.75rem;
-	border-radius: 2rem;
-	font-size: 0.85rem;
-	font-weight: 700;
+	line-height: 1.2;
 }
 
-.recap-strong {
-	background: rgba(46, 160, 67, 0.2);
-	color: #2ea043;
+/* Color only the icon */
+.recap-strong .recap-icon {
+	color: var(--color-success);
 }
 
-.recap-adequate {
-	background: rgba(210, 153, 34, 0.2);
-	color: #d29922;
+.recap-adequate .recap-icon {
+	color: var(--color-warning);
 }
 
-.recap-concerning {
-	background: rgba(218, 54, 51, 0.2);
-	color: #da3633;
+.recap-concerning .recap-icon {
+	color: var(--color-danger);
 }
-
 /* Noshell card overrides for recap readability */
 .noshell-card ul {
 	padding-left: 1.25rem;
@@ -1623,44 +1723,43 @@ $(document).on(':storyready', function () {
 &lt;/div&gt;</tw-passagedata><tw-passagedata pid="10" name="Recap" tags="noshell" position="300,1100" size="100,100">&lt;div class=&quot;noshell-page&quot;&gt;
 	&lt;div class=&quot;noshell-card noshell-card-wide&quot;&gt;
 		&lt;h1&gt;Session Debrief&lt;/h1&gt;
-
 		&lt;p&gt;Here is a summary of your clinical decisions and their impact:&lt;/p&gt;
-
 		&lt;div class=&quot;recap-section&quot;&gt;
-			&lt;h3&gt;Decision 1: Initial Response to Crisis Statement&lt;/h3&gt;
+			&lt;h2&gt;Decision 1: Initial Response to Crisis Statement&lt;/h2&gt;
 			&lt;p&gt;&lt;strong&gt;Your choice:&lt;/strong&gt; &lt;&lt;print $choice1&gt;&gt;&lt;/p&gt;
-			&lt;p class=&quot;recap-quality recap-&lt;&lt;print $choice1quality&gt;&gt;&quot;&gt;
-				&lt;&lt;if $choice1quality is &quot;strong&quot;&gt;&gt;Rating: Effective
-				&lt;&lt;elseif $choice1quality is &quot;adequate&quot;&gt;&gt;Rating: Partially Effective
-				&lt;&lt;elseif $choice1quality is &quot;concerning&quot;&gt;&gt;Rating: Needs Attention
-				&lt;&lt;/if&gt;&gt;
+			&lt;p class=&quot;recap-rating-line&quot;&gt;
+				&lt;strong&gt;Rating:&lt;/strong&gt;
+				&lt;span class=&quot;recap-quality&quot; @class=&quot;&#39;recap-&#39; + $choice1quality&quot;&gt;
+					&lt;span aria-hidden=&quot;true&quot; class=&quot;recap-icon&quot;&gt;&lt;&lt;if $choice1quality is &quot;strong&quot;&gt;&gt;▲&lt;&lt;elseif $choice1quality is &quot;adequate&quot;&gt;&gt;◆&lt;&lt;elseif $choice1quality is &quot;concerning&quot;&gt;&gt;▼&lt;&lt;/if&gt;&gt;&lt;/span&gt;
+					&lt;span class=&quot;recap-label&quot;&gt;&lt;&lt;if $choice1quality is &quot;strong&quot;&gt;&gt;Effective&lt;&lt;elseif $choice1quality is &quot;adequate&quot;&gt;&gt;Partially Effective&lt;&lt;elseif $choice1quality is &quot;concerning&quot;&gt;&gt;Needs Attention&lt;&lt;/if&gt;&gt;&lt;/span&gt;
+				&lt;/span&gt;
 			&lt;/p&gt;
 		&lt;/div&gt;
-
 		&lt;div class=&quot;recap-section&quot;&gt;
-			&lt;h3&gt;Decision 2: Engaging with Alex&#39;s Identity&lt;/h3&gt;
+			&lt;h2&gt;Decision 2: Engaging with Alex&#39;s Identity&lt;/h2&gt;
 			&lt;p&gt;&lt;strong&gt;Your choice:&lt;/strong&gt; &lt;&lt;print $choice2&gt;&gt;&lt;/p&gt;
-			&lt;p class=&quot;recap-quality recap-&lt;&lt;print $choice2quality&gt;&gt;&quot;&gt;
-				&lt;&lt;if $choice2quality is &quot;strong&quot;&gt;&gt;Rating: Effective
-				&lt;&lt;elseif $choice2quality is &quot;adequate&quot;&gt;&gt;Rating: Partially Effective
-				&lt;&lt;elseif $choice2quality is &quot;concerning&quot;&gt;&gt;Rating: Needs Attention
-				&lt;&lt;/if&gt;&gt;
+			&lt;p class=&quot;recap-rating-line&quot;&gt;
+				&lt;strong&gt;Rating:&lt;/strong&gt;
+				&lt;span class=&quot;recap-quality&quot; @class=&quot;&#39;recap-&#39; + $choice2quality&quot;&gt;
+					&lt;span aria-hidden=&quot;true&quot; class=&quot;recap-icon&quot;&gt;&lt;&lt;if $choice2quality is &quot;strong&quot;&gt;&gt;▲&lt;&lt;elseif $choice2quality is &quot;adequate&quot;&gt;&gt;◆&lt;&lt;elseif $choice2quality is &quot;concerning&quot;&gt;&gt;▼&lt;&lt;/if&gt;&gt;&lt;/span&gt;
+					&lt;span class=&quot;recap-label&quot;&gt;&lt;&lt;if $choice2quality is &quot;strong&quot;&gt;&gt;Effective&lt;&lt;elseif $choice2quality is &quot;adequate&quot;&gt;&gt;Partially Effective&lt;&lt;elseif $choice2quality is &quot;concerning&quot;&gt;&gt;Needs Attention&lt;&lt;/if&gt;&gt;&lt;/span&gt;
+				&lt;/span&gt;
 			&lt;/p&gt;
 		&lt;/div&gt;
-
 		&lt;div class=&quot;recap-section&quot;&gt;
-			&lt;h3&gt;Decision 3: Safety Planning&lt;/h3&gt;
+			&lt;h2&gt;Decision 3: Safety Planning&lt;/h2&gt;
 			&lt;p&gt;&lt;strong&gt;Your choice:&lt;/strong&gt; &lt;&lt;print $choice3&gt;&gt;&lt;/p&gt;
-			&lt;p class=&quot;recap-quality recap-&lt;&lt;print $choice3quality&gt;&gt;&quot;&gt;
-				&lt;&lt;if $choice3quality is &quot;strong&quot;&gt;&gt;Rating: Effective
-				&lt;&lt;elseif $choice3quality is &quot;adequate&quot;&gt;&gt;Rating: Partially Effective
-				&lt;&lt;elseif $choice3quality is &quot;concerning&quot;&gt;&gt;Rating: Needs Attention
-				&lt;&lt;/if&gt;&gt;
+			&lt;p class=&quot;recap-rating-line&quot;&gt;
+				&lt;strong&gt;Rating:&lt;/strong&gt;
+				&lt;span class=&quot;recap-quality&quot; @class=&quot;&#39;recap-&#39; + $choice3quality&quot;&gt;
+					&lt;span aria-hidden=&quot;true&quot; class=&quot;recap-icon&quot;&gt;&lt;&lt;if $choice3quality is &quot;strong&quot;&gt;&gt;▲&lt;&lt;elseif $choice3quality is &quot;adequate&quot;&gt;&gt;◆&lt;&lt;elseif $choice3quality is &quot;concerning&quot;&gt;&gt;▼&lt;&lt;/if&gt;&gt;&lt;/span&gt;
+					&lt;span class=&quot;recap-label&quot;&gt;&lt;&lt;if $choice3quality is &quot;strong&quot;&gt;&gt;Effective&lt;&lt;elseif $choice3quality is &quot;adequate&quot;&gt;&gt;Partially Effective&lt;&lt;elseif $choice3quality is &quot;concerning&quot;&gt;&gt;Needs Attention&lt;&lt;/if&gt;&gt;&lt;/span&gt;
+				&lt;/span&gt;
 			&lt;/p&gt;
 		&lt;/div&gt;
 
 		&lt;div class=&quot;recap-section&quot;&gt;
-			&lt;h3&gt;Key Takeaways&lt;/h3&gt;
+			&lt;h2&gt;Key Takeaways&lt;/h2&gt;
 			&lt;ul&gt;
 				&lt;li&gt;&lt;strong&gt;Safety and identity are intertwined.&lt;/strong&gt; For LGBTQ+ clients, crisis response cannot be separated from identity affirmation. Family rejection is a clinical risk factor, not just a family conflict.&lt;/li&gt;
 				&lt;li&gt;&lt;strong&gt;Timing and sequence matter.&lt;/strong&gt; Validation before assessment, affirmation before exploration, collaboration before protocol. The order communicates your priorities.&lt;/li&gt;
@@ -1669,11 +1768,11 @@ $(document).on(':storyready', function () {
 		&lt;/div&gt;
 
 		&lt;div class=&quot;recap-section&quot;&gt;
-			&lt;h3&gt;Further Reading&lt;/h3&gt;
+			&lt;h2&gt;Further Reading&lt;/h2&gt;
 			&lt;ul&gt;
 				&lt;li&gt;Ryan, C., et al. (2009). Family rejection as a predictor of negative health outcomes in white and Latino LGB young adults. &lt;em&gt;Pediatrics, 123&lt;/em&gt;(1), 346-352.&lt;/li&gt;
 				&lt;li&gt;Meyer, I. H. (2003). Prejudice, social stress, and mental health in lesbian, gay, and bisexual populations. &lt;em&gt;Psychological Bulletin, 129&lt;/em&gt;(5), 674-697.&lt;/li&gt;
-				&lt;li&gt;Stanley, B., &amp; Brown, G. K. (2012). Safety planning intervention: A brief intervention to mitigate suicide risk. &lt;em&gt;Cognitive and Behavioral Practice, 19&lt;/em&gt;(2), 256-264.&lt;/li&gt;
+				&lt;li&gt;Stanley, B., &amp;amp; Brown, G. K. (2012). Safety planning intervention: A brief intervention to mitigate suicide risk. &lt;em&gt;Cognitive and Behavioral Practice, 19&lt;/em&gt;(2), 256-264.&lt;/li&gt;
 				&lt;li&gt;APA (2021). &lt;em&gt;Guidelines for Psychological Practice with Sexual Minority Persons.&lt;/em&gt;&lt;/li&gt;
 			&lt;/ul&gt;
 		&lt;/div&gt;
