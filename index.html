@@ -189,6 +189,7 @@ body.font-dyslexic {
 
 /* Font size */
 body.text-small .passage-text,
+body.text-small .noshell-card,
 body.text-small .choices a,
 body.text-small .ui-btn,
 body.text-small .utility-box {
@@ -196,6 +197,7 @@ body.text-small .utility-box {
 }
 
 body.text-medium .passage-text,
+body.text-medium .noshell-card,
 body.text-medium .choices a,
 body.text-medium .ui-btn,
 body.text-medium .utility-box {
@@ -203,6 +205,7 @@ body.text-medium .utility-box {
 }
 
 body.text-large .passage-text,
+body.text-large .noshell-card,
 body.text-large .choices a,
 body.text-large .ui-btn,
 body.text-large .utility-box {
@@ -210,15 +213,18 @@ body.text-large .utility-box {
 }
 
 /* Line height */
-body.line-normal .passage-text {
+body.line-normal .passage-text,
+body.line-normal .noshell-card {
 	line-height: 1.6;
 }
 
-body.line-relaxed .passage-text {
+body.line-relaxed .passage-text,
+body.line-relaxed .noshell-card {
 	line-height: 1.85;
 }
 
-body.line-spacious .passage-text {
+body.line-spacious .passage-text,
+body.line-spacious .noshell-card {
 	line-height: 2.1;
 }
 
@@ -391,12 +397,12 @@ body.theme-dark #ui-dialog-body p {
 	box-sizing: border-box;
 	line-height: normal;
 	font-size: 16px;
-	background: transparent;
+	background: #f3f3f3;
 }
 
+/* Default card for intro, credits, and shorter content */
 .passage .noshell-card {
-	width: 100%;
-	max-width: 800px;
+	width: min(100%, 800px);
 	max-height: 90vh;
 	overflow-y: auto;
 	overflow-x: hidden;
@@ -406,6 +412,11 @@ body.theme-dark #ui-dialog-body p {
 	padding: 2rem;
 	box-sizing: border-box;
 	box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.15);
+}
+
+/* Wider card for recap or text-heavy content */
+.passage .noshell-card.noshell-card-wide {
+	width: min(100%, 1100px);
 }
 
 .passage .noshell-card h1,
@@ -468,19 +479,15 @@ body.theme-dark #ui-dialog-body p {
 	margin-top: 1.5rem;
 }
 
-/* Optional spacing for groups of buttons */
-.passage .noshell-actions {
+.passage .noshell-top-controls {
 	display: flex;
-	flex-wrap: wrap;
-	gap: 0.75rem;
-	margin-top: 1.5rem;
+	justify-content: flex-end;
+	margin-bottom: 1rem;
 }
 
-/* Keep no-shell page background transparent in dark theme */
 body.theme-dark .passage .noshell-page {
-	background: transparent;
+	background: #121212;
 }
-
 /* =========================================================
    Main Layout
    ========================================================= */
@@ -616,7 +623,7 @@ body.theme-dark .passage .noshell-page {
 	width: 100%;
 	display: flex;
 	align-items: center;
-	justify-content: flex-end;
+	justify-content: flex-start;
 	gap: 0.75rem;
 }
 
@@ -793,7 +800,9 @@ body.theme-dark .choices a:focus-visible {
 		max-height: 40vh;
 	}
 
-	.passage .noshell-card {
+	.passage .noshell-card,
+	.passage .noshell-card.noshell-card-wide {
+		width: 100%;
 		padding: 1.5rem;
 		max-height: 92vh;
 	}
@@ -1111,7 +1120,7 @@ setup.openSettings = function () {
 			'</div>' +
 		'</div>';
 
-	Dialog.setup('Accessibility Settings');
+	Dialog.setup('<i class="fa-solid fa-universal-access" aria-hidden="true"></i> Settings');
 	Dialog.wiki(html);
 	Dialog.open();
 
@@ -1209,6 +1218,7 @@ $(document).on(':passagerender', function (ev) {
 		<div class="story-left">
 			<div class="top-controls">
 				<button class="ui-btn settings-button" type="button">
+				<i class="fa-solid fa-universal-access" aria-hidden="true"></i>
 					Settings
 				</button>
 			</div>
@@ -1265,6 +1275,14 @@ $(document).on(':passagerender', function (ev) {
 
 	passageEl.appendChild(shell);
 });
+
+/* ---------------------------------------------------------
+   Global Settings Button Handlers
+   --------------------------------------------------------- */
+$(document).off('click.noshellSettings', '.noshell-settings-button')
+	.on('click.noshellSettings', '.noshell-settings-button', function () {
+		setup.openSettings();
+	});
 
 /* ---------------------------------------------------------
    Apply Preferences on Story Startup
@@ -1345,6 +1363,12 @@ $(document).on(':storyready', function () {
 
 &lt;&lt;/switch&gt;&gt;</tw-passagedata><tw-passagedata pid="3" name="Intro" tags="noshell" position="100,300" size="100,100">&lt;div class=&quot;noshell-page&quot;&gt;
 	&lt;div class=&quot;noshell-card&quot;&gt;
+&lt;div class=&quot;noshell-top-controls&quot;&gt;
+	&lt;button class=&quot;ui-btn noshell-settings-button&quot; type=&quot;button&quot;&gt;
+		&lt;i class=&quot;fa-solid fa-universal-access&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;
+		&lt;span&gt;Settings&lt;/span&gt;
+	&lt;/button&gt;
+&lt;/div&gt;
 		&lt;h1&gt;Session with Alex&lt;/h1&gt;
 		&lt;p&gt;&lt;strong&gt;Scenario Overview&lt;/strong&gt;&lt;/p&gt;
 		&lt;p&gt;You are a counselor at a university counseling center. A student named &lt;strong&gt;Alex (they/them)&lt;/strong&gt;, age 20, has arrived for an emergency walk-in appointment.&lt;/p&gt;
@@ -1597,7 +1621,7 @@ $(document).on(':storyready', function () {
 &lt;div class=&quot;choices&quot;&gt;
 	[[Proceed to Session Debrief|Recap]]
 &lt;/div&gt;</tw-passagedata><tw-passagedata pid="10" name="Recap" tags="noshell" position="300,1100" size="100,100">&lt;div class=&quot;noshell-page&quot;&gt;
-	&lt;div class=&quot;noshell-card&quot;&gt;
+	&lt;div class=&quot;noshell-card noshell-card-wide&quot;&gt;
 		&lt;h1&gt;Session Debrief&lt;/h1&gt;
 
 		&lt;p&gt;Here is a summary of your clinical decisions and their impact:&lt;/p&gt;
@@ -1655,7 +1679,7 @@ $(document).on(':storyready', function () {
 		&lt;/div&gt;
 
 		&lt;div class=&quot;noshell-actions&quot;&gt;
-			[[Try Again|Intro]]
+			[[Restart|Intro]]
 		&lt;/div&gt;
 	&lt;/div&gt;
 &lt;/div&gt;</tw-passagedata></tw-storydata>
