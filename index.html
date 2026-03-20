@@ -104,101 +104,124 @@ var LZString=function(){var r=String.fromCharCode,o="ABCDEFGHIJKLMNOPQRSTUVWXYZa
 		<div id="init-lacking"><p>Browser lacks capabilities required to play.</p><p>Upgrade or switch to another browser.</p></div>
 		<div id="init-loading"><div>Loading&hellip;</div></div>
 	</div>
-	<tw-storydata name="Session with Alex" startnode="3" creator="Twine" creator-version="2.11.0" format="SugarCube" format-version="2.37.3" ifid="EED9C9F2-8714-4CCD-BC08-8DC434736001" options="" tags="" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">/* =========================================================
-   Theme Variables
-   Change these to update the light/dark color schemes
-   ========================================================= */
+	<tw-storydata name="Session with Alex" startnode="3" creator="Twine" creator-version="2.11.0" format="SugarCube" format-version="2.37.3" ifid="EED9C9F2-8714-4CCD-BC08-8DC434736001" options="" tags="" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">/* =============================================================
+
+   STORY TEMPLATE STYLESHEET
+   Organized for template reuse. Sections are ordered so that
+   customizable values come first and structural layout follows.
+
+   TABLE OF CONTENTS
+   -----------------------------------------------------------------
+   1. THEME CONFIG ............. Primary color & derived palette
+   2. DARK THEME OVERRIDES ..... Dark-mode variable adjustments
+   3. ENGINE RESET ............. SugarCube / browser normalization
+   4. ACCESSIBILITY PREFS ...... Font, size, and spacing classes
+   5. LAYOUT: SPLIT-PANEL ...... Left/right shell for scene pages
+   6. LAYOUT: NO-SHELL ......... Centered card for intro/recap
+   7. TYPOGRAPHY ............... Passage text, titles, headings
+   8. CONTROLS ................. Buttons, settings panel, dialog
+   9. CHOICES .................. Learner response options
+   10. SCENE ELEMENTS .......... Blockquotes, feedback, labels
+   11. RECAP PAGE .............. Decision cards, collapsibles
+   12. RESPONSIVE .............. Breakpoints for small screens
+
+   ============================================================= */
+
+
+/* =============================================================
+   1. THEME CONFIG
+   -----------------------------------------------------------------
+   ★ START HERE when adapting this template.
+   Change --color-primary to set the entire color scheme.
+   Everything else in this block derives from it automatically
+   using CSS color-mix(). You should not need to touch the
+   derived values unless you want a non-standard relationship.
+   ============================================================= */
 
 :root {
-	/* Core accent/surface colors */
-	--color-primary-dark: #336060;      /* main teal for panels/cards with white text */
-	--color-primary-light: #8fbfbf;     /* lighter accent teal for labels/details */
-	--color-primary-bg: rgba(51, 96, 96, 0.08);
-	--color-primary-bg-strong: rgba(51, 96, 96, 0.12);
+	/* ── Set this one value to theme your story ── */
+	--color-primary: #336060;
 
-	/* Neutrals */
-	--color-text: #111;
-	--color-bg: #f3f3f3;
-	--color-surface: #ffffff;
+	/* ── Derived from --color-primary (auto-calculated) ── */
+	--color-primary-dark:     var(--color-primary);
+	--color-primary-light:    color-mix(in srgb, var(--color-primary) 55%, white);
+	--color-primary-bg:       color-mix(in srgb, var(--color-primary) 8%, transparent);
+	--color-primary-bg-strong: color-mix(in srgb, var(--color-primary) 12%, transparent);
+	--color-focus:            color-mix(in srgb, var(--color-primary) 70%, #1a56c8);
+
+	/* ── Recap card rating saturation (derived from primary) ── */
+	--color-rating-strong:     var(--color-primary);
+	--color-rating-adequate:   color-mix(in srgb, var(--color-primary) 50%, #ccc);
+	--color-rating-concerning: color-mix(in srgb, var(--color-primary) 25%, #ccc);
+
+	/* ── Light theme neutrals ── */
+	--color-text:        #111;
+	--color-bg:          #f3f3f3;
+	--color-surface:     #ffffff;
 	--color-surface-alt: #fafafa;
 
-	/* Borders */
-	--color-border: #222;
+	/* ── Borders ── */
+	--color-border:      #222;
 	--color-border-light: #ddd;
-	--color-border-mid: #444;
+	--color-border-mid:  #444;
 	--color-border-soft: #e0e0e0;
 
-	/* Dialog */
-	--color-dialog-titlebar-bg: #1f1f1f;
-	--color-dialog-titlebar-text: #f5f5f5;
-
-	/* Dark theme neutrals */
-	--color-dark-bg: #121212;
-	--color-dark-panel: #1b1b1b;
-	--color-dark-surface: #242424;
+	/* ── Fixed dark palette (used by dark theme override below) ── */
+	--color-dark-bg:          #121212;
+	--color-dark-panel:       #1b1b1b;
+	--color-dark-surface:     #242424;
 	--color-dark-surface-alt: #1e1e1e;
-	--color-dark-hover: #2e2e2e;
+	--color-dark-hover:       #2e2e2e;
 	--color-dark-hover-strong: #333;
 
-	/* Utilities */
-	--color-focus: #1a73e8;
+	/* ── Dialog (stays dark in both themes) ── */
+	--color-dialog-titlebar-bg:   #1f1f1f;
+	--color-dialog-titlebar-text: #f5f5f5;
+
+	/* ── Utilities ── */
 	--color-shadow: rgba(0, 0, 0, 0.15);
-	--color-white: #fff;
+	--color-white:  #fff;
+}
 
-	/* Status colors */
-	--color-success: #2ea043;
-	--color-success-bg: rgba(46, 160, 67, 0.2);
 
-	--color-warning: #8a6700;
-	--color-warning-bg: rgba(210, 153, 34, 0.2);
+/* =============================================================
+   2. DARK THEME OVERRIDES
+   -----------------------------------------------------------------
+   Remaps semantic variables to the dark palette.
+   Adjusts color-mix ratios for dark backgrounds.
+   You generally don't need to edit this unless you change
+   the dark neutral palette above.
+   ============================================================= */
 
-	--color-danger: #da3633;
-	--color-danger-bg: rgba(218, 54, 51, 0.2);
+body.theme-dark {
+	--color-primary-light:    color-mix(in srgb, var(--color-primary) 65%, white);
+	--color-primary-bg:       color-mix(in srgb, var(--color-primary) 12%, transparent);
+	--color-primary-bg-strong: color-mix(in srgb, var(--color-primary) 16%, transparent);
+	--color-focus:            color-mix(in srgb, var(--color-primary) 60%, #4dabf7);
+
+	--color-rating-strong:     color-mix(in srgb, var(--color-primary) 85%, white);
+	--color-rating-adequate:   color-mix(in srgb, var(--color-primary) 45%, #999);
+	--color-rating-concerning: color-mix(in srgb, var(--color-primary) 22%, #888);
+
+	--color-text:        #f5f5f5;
+	--color-bg:          var(--color-dark-bg);
+	--color-surface:     var(--color-dark-surface);
+	--color-surface-alt: var(--color-dark-surface-alt);
+	--color-border:      #ddd;
+	--color-border-soft: #444;
 }
 
 body.theme-dark {
-	--color-primary-dark: #336060;
-	--color-primary-light: #8fbfbf;
-	--color-primary-bg: rgba(51, 96, 96, 0.12);
-	--color-primary-bg-strong: rgba(51, 96, 96, 0.16);
-
-	--color-text: #f5f5f5;
-	--color-bg: #121212;
-	--color-surface: #242424;
-	--color-surface-alt: #1e1e1e;
-
-	--color-border: #ddd;
-	--color-border-light: #ddd;
-	--color-border-mid: #444;
-	--color-border-soft: #444;
-
-	--color-dialog-titlebar-bg: #1f1f1f;
-	--color-dialog-titlebar-text: #f5f5f5;
-
-	--color-dark-bg: #121212;
-	--color-dark-panel: #1b1b1b;
-	--color-dark-surface: #242424;
-	--color-dark-surface-alt: #1e1e1e;
-	--color-dark-hover: #2e2e2e;
-	--color-dark-hover-strong: #333;
-
-	--color-focus: #1a73e8;
-	--color-shadow: rgba(0, 0, 0, 0.15);
-	--color-white: #fff;
-
-	--color-success: #2ea043;
-	--color-success-bg: rgba(46, 160, 67, 0.2);
-
-	--color-warning: #8a6700;
-	--color-warning-bg: rgba(210, 153, 34, 0.2);
-
-	--color-danger: #da3633;
-	--color-danger-bg: rgba(218, 54, 51, 0.2);
+	background: var(--color-dark-bg);
 }
 
-/* =========================================================
-   Base Reset / SugarCube Cleanup
-   ========================================================= */
+
+/* =============================================================
+   3. ENGINE RESET
+   -----------------------------------------------------------------
+   SugarCube and browser normalization. Do not edit unless you
+   are changing the fundamental page structure.
+   ============================================================= */
 
 html,
 body,
@@ -222,7 +245,6 @@ body {
 	color: var(--color-text);
 }
 
-/* Fully hide SugarCube UI bar */
 #ui-bar,
 #ui-bar-body,
 #ui-bar-tray,
@@ -237,7 +259,6 @@ body {
 	overflow: hidden !important;
 }
 
-/* Ensure passage container behaves like a true full-screen container */
 .passage {
 	display: flex !important;
 	flex-direction: column !important;
@@ -253,333 +274,62 @@ body {
 	padding: 0 !important;
 }
 
-.passage > p {
-	margin-top: 0;
-}
-
-.passage br:first-child {
-	display: none;
-}
+.passage > p      { margin-top: 0; }
+.passage br:first-child { display: none; }
 
 
-/* =========================================================
-   User Preferences / Accessibility
-   ========================================================= */
+/* =============================================================
+   4. ACCESSIBILITY PREFS
+   -----------------------------------------------------------------
+   Font family, text size, and line spacing classes applied
+   to <body> by the JavaScript preference system.
+   Edit the font-size and line-height values to taste.
+   ============================================================= */
 
-/* Font family */
-body.font-serif {
-	font-family: Georgia, "Times New Roman", serif;
-}
+/* Font families */
+body.font-serif    { font-family: Georgia, "Times New Roman", serif; }
+body.font-sans     { font-family: Arial, Helvetica, sans-serif; }
+body.font-dyslexic { font-family: "OpenDyslexic", Arial, Helvetica, sans-serif; }
 
-body.font-sans {
-	font-family: Arial, Helvetica, sans-serif;
-}
-
-body.font-dyslexic {
-	font-family: "OpenDyslexic", Arial, Helvetica, sans-serif;
-}
-
-/* Font size */
-body.text-small .passage-text,
-body.text-small .noshell-card,
-body.text-small .choices a,
-body.text-small .ui-btn{
-	font-size: 1rem;
-}
+/* Text sizes — applied to passage text, cards, choices, buttons */
+body.text-small  .passage-text,
+body.text-small  .noshell-card,
+body.text-small  .choices a,
+body.text-small  .ui-btn { font-size: 1rem; }
 
 body.text-medium .passage-text,
 body.text-medium .noshell-card,
 body.text-medium .choices a,
-body.text-medium .ui-btn{
-	font-size: 1.15rem;
-}
+body.text-medium .ui-btn { font-size: 1.15rem; }
 
-body.text-large .passage-text,
-body.text-large .noshell-card,
-body.text-large .choices a,
-body.text-large .ui-btn{
-	font-size: 1.3rem;
-}
+body.text-large  .passage-text,
+body.text-large  .noshell-card,
+body.text-large  .choices a,
+body.text-large  .ui-btn { font-size: 1.3rem; }
 
-/* Line height */
-body.line-normal .passage-text,
-body.line-normal .noshell-card {
-	line-height: 1.6;
-}
+/* Line spacing */
+body.line-normal  .passage-text,
+body.line-normal  .noshell-card { line-height: 1.6; }
 
 body.line-relaxed .passage-text,
-body.line-relaxed .noshell-card {
-	line-height: 1.85;
-}
+body.line-relaxed .noshell-card { line-height: 1.85; }
 
 body.line-spacious .passage-text,
-body.line-spacious .noshell-card {
-	line-height: 2.1;
-}
+body.line-spacious .noshell-card { line-height: 2.1; }
 
-/* Scale story title with text-size preference */
-body.text-small .story-title {
-	font-size: 2rem;
-}
-
-body.text-medium .story-title {
-	font-size: 2.2rem;
-}
-
-body.text-large .story-title {
-	font-size: 2.5rem;
-}
+/* Title scales with text-size preference */
+body.text-small  .story-title { font-size: 2rem; }
+body.text-medium .story-title { font-size: 2.2rem; }
+body.text-large  .story-title { font-size: 2.5rem; }
 
 
-/* =========================================================
-   Settings Panel
-   ========================================================= */
-
-.settings-panel {
-	font-size: 1rem;
-	line-height: 1.5;
-	color: inherit;
-	background: transparent;
-}
-
-.settings-panel fieldset {
-	margin: 0 0 1.25rem 0;
-	padding: 0;
-	border: 0;
-}
-
-.settings-panel legend {
-	font-weight: 700;
-	margin-bottom: 0.5rem;
-	color: inherit;
-}
-
-.settings-panel label {
-	display: block;
-	margin: 0.35rem 0;
-	cursor: pointer;
-	color: inherit;
-}
-
-.settings-panel input[type="radio"] {
-	margin-right: 0.5rem;
-}
-
-.settings-actions {
-	margin-top: 1rem;
-	display: flex;
-	gap: 0.75rem;
-	flex-wrap: wrap;
-}
-
-.settings-actions button {
-	font: inherit;
-	padding: 0.7rem 1rem;
-	border: 2px solid var(--color-border);
-	border-radius: 0.75rem;
-	background: var(--color-surface);
-	color: var(--color-text);
-	cursor: pointer;
-}
-
-body.theme-dark .settings-actions button {
-	background: var(--color-dark-hover);
-	color: var(--color-text);
-	border-color: var(--color-border-light);
-}
-
-
-/* =========================================================
-   SugarCube Dialog
-   Keep titlebar dark in both light and dark themes
-   ========================================================= */
-
-#ui-dialog {
-	color: var(--color-text);
-}
-
-#ui-dialog-titlebar {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 0.75rem 1rem;
-	background: var(--color-dialog-titlebar-bg) !important;
-	color: var(--color-dialog-titlebar-text) !important;
-	border-bottom: 1px solid var(--color-border-mid) !important;
-}
-
-#ui-dialog-title {
-	color: var(--color-dialog-titlebar-text) !important;
-	text-transform: none !important;
-	letter-spacing: normal !important;
-	font-weight: 600;
-	font-size: 1.2rem;
-}
-
-/* Force dialog close control to remain visible */
-#ui-dialog-titlebar-close,
-#ui-dialog-titlebar-close:link,
-#ui-dialog-titlebar-close:visited,
-#ui-dialog-titlebar-close:hover,
-#ui-dialog-titlebar-close:active,
-#ui-dialog-titlebar-close:focus,
-#ui-dialog-titlebar-close::before,
-#ui-dialog-titlebar-close::after,
-#ui-dialog-titlebar-close *,
-#ui-dialog-titlebar-close svg,
-#ui-dialog-titlebar-close path {
-	color: var(--color-dialog-titlebar-text) !important;
-	fill: var(--color-dialog-titlebar-text) !important;
-	stroke: var(--color-dialog-titlebar-text) !important;
-	opacity: 1 !important;
-}
-
-#ui-dialog-body {
-	background: var(--color-surface);
-	color: var(--color-text);
-}
-
-#ui-dialog-body a,
-#ui-dialog-body button,
-#ui-dialog-body label,
-#ui-dialog-body legend,
-#ui-dialog-body div,
-#ui-dialog-body span,
-#ui-dialog-body p {
-	color: inherit;
-}
-
-#ui-dialog-body input[type="radio"] {
-	accent-color: var(--color-focus);
-}
-
-body.theme-dark #ui-dialog {
-	color: var(--color-text);
-}
-
-body.theme-dark #ui-dialog-body {
-	background: var(--color-dark-surface);
-	color: var(--color-text);
-}
-
-body.theme-dark #ui-dialog-body a,
-body.theme-dark #ui-dialog-body button,
-body.theme-dark #ui-dialog-body label,
-body.theme-dark #ui-dialog-body legend,
-body.theme-dark #ui-dialog-body div,
-body.theme-dark #ui-dialog-body span,
-body.theme-dark #ui-dialog-body p {
-	color: inherit;
-}
-
-/* =========================================================
-   No-shell page layout
-   ========================================================= */
-
-.passage .noshell-page {
-	width: 100%;
-	height: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 2rem;
-	box-sizing: border-box;
-	line-height: normal;
-	font-size: 16px;
-	background: var(--color-bg);
-}
-
-/* Default card for intro, credits, and shorter content */
-.passage .noshell-card {
-	width: min(100%, 800px);
-	max-height: 90vh;
-	overflow-y: auto;
-	overflow-x: hidden;
-	background: var(--color-primary-dark);
-	color: var(--color-white);
-	border-radius: 1.5rem;
-	padding: 2rem;
-	box-sizing: border-box;
-	box-shadow: 0 0.75rem 2rem var(--color-shadow);
-}
-
-/* Wider card for recap or text-heavy content */
-.passage .noshell-card.noshell-card-wide {
-	width: min(100%, 1100px);
-}
-
-.passage .noshell-card h1,
-.passage .noshell-card h2,
-.passage .noshell-card h3,
-.passage .noshell-card p:first-child {
-	margin-top: 0;
-}
-
-.passage .noshell-card p:last-child {
-	margin-bottom: 0;
-}
-
-/* Responsive image wrapper for no-shell pages */
-.passage .noshell-image-wrap {
-	width: 100%;
-	max-width: 100%;
-	margin: 1.5rem auto;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	min-height: 0;
-}
-
-.passage .noshell-image-wrap img {
-	display: block;
-	width: 100%;
-	max-width: 100%;
-	height: auto;
-	max-height: 45vh;
-	object-fit: cover;
-	border-radius: 1rem;
-}
-
-/* Links/buttons inside no-shell card */
-.passage .noshell-card a {
-	display: inline-block;
-	margin-top: 1rem;
-	padding: 0.8rem 1.25rem;
-	border: 2px solid var(--color-white);
-	border-radius: 0.9rem;
-	color: var(--color-white);
-	text-decoration: none;
-	font-weight: 600;
-	background: transparent;
-}
-
-.passage .noshell-card a:hover,
-.passage .noshell-card a:focus-visible {
-	background: rgba(255, 255, 255, 0.14);
-	outline: 3px solid var(--color-focus);
-	outline-offset: 3px;
-}
-
-/* Optional spacing for groups of buttons */
-.passage .noshell-actions {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.75rem;
-	margin-top: 1.5rem;
-}
-
-.passage .noshell-top-controls {
-	display: flex;
-	justify-content: flex-end;
-	margin-bottom: 1rem;
-}
-
-body.theme-dark .passage .noshell-page {
-	background: var(--color-dark-bg);
-}
-/* =========================================================
-   Main Layout
-   ========================================================= */
+/* =============================================================
+   5. LAYOUT: SPLIT-PANEL
+   -----------------------------------------------------------------
+   The left/right shell used for scene passages.
+   Left panel = accent-colored with title + image.
+   Right panel = content area with passage text + choices.
+   ============================================================= */
 
 .story-shell {
 	display: flex;
@@ -602,7 +352,6 @@ body.theme-dark .passage .noshell-page {
 	overflow: hidden;
 }
 
-/* Left panel */
 .story-left {
 	background: var(--color-primary-dark);
 	color: var(--color-white);
@@ -613,7 +362,6 @@ body.theme-dark .passage .noshell-page {
 	text-align: center;
 }
 
-/* Right panel */
 .story-right {
 	background: var(--color-bg);
 	color: var(--color-text);
@@ -621,7 +369,10 @@ body.theme-dark .passage .noshell-page {
 	flex-direction: column;
 }
 
-/* Inner content wrapper for right panel */
+body.theme-dark .story-right {
+	background: var(--color-dark-panel);
+}
+
 .passage-wrap {
 	width: 100%;
 	max-width: 640px;
@@ -634,44 +385,11 @@ body.theme-dark .passage .noshell-page {
 	overflow-y: auto;
 }
 
-
-/* =========================================================
-   Typography / Spacing Cleanup
-   ========================================================= */
-
-.story-title,
-.passage-text > *:first-child,
-.passage-text p:first-child {
-	margin-top: 0;
-}
-
-.passage-text > *:last-child,
-.passage-text p:last-child {
-	margin-bottom: 0;
-}
-
-.passage-text {
-	font-size: 1.2rem;
-	line-height: 1.7;
-	margin-bottom: 2rem;
-}
-
-
-/* =========================================================
-   Left Panel Content
-   ========================================================= */
-
+/* Left panel content */
 .story-brand {
 	width: 100%;
 	max-width: 520px;
 	margin: 0;
-}
-
-.story-title {
-	font-size: 2.2rem;
-	font-weight: 700;
-	line-height: 1.2;
-	margin: 0 0 1rem 0;
 }
 
 .story-image-wrap {
@@ -703,27 +421,145 @@ body.theme-dark .passage .noshell-page {
 }
 
 
-/* =========================================================
-   Controls / Buttons
-   ========================================================= */
+/* =============================================================
+   6. LAYOUT: NO-SHELL
+   -----------------------------------------------------------------
+   Centered card layout for passages tagged 'noshell'
+   (intro, recap, credits, etc.).
+   ============================================================= */
 
-.top-controls,
-.bottom-controls {
+.passage .noshell-page {
 	width: 100%;
+	height: 100%;
 	display: flex;
 	align-items: center;
-	justify-content: flex-start;
-	gap: 0.75rem;
+	justify-content: center;
+	padding: 2rem;
+	box-sizing: border-box;
+	line-height: normal;
+	font-size: 16px;
+	background: var(--color-bg);
 }
 
-.top-controls {
+.passage .noshell-card {
+	width: min(100%, 800px);
+	max-height: 90vh;
+	overflow-y: auto;
+	overflow-x: hidden;
+	background: var(--color-primary-dark);
+	color: var(--color-white);
+	border-radius: 1.5rem;
+	padding: 2rem;
+	box-sizing: border-box;
+	box-shadow: 0 0.75rem 2rem var(--color-shadow);
+}
+
+body.theme-dark .passage .noshell-card {
+	background: var(--color-dark-surface);
+	color: var(--color-text);
+}
+
+.passage .noshell-card.noshell-card-wide {
+	width: min(100%, 1100px);
+}
+
+.passage .noshell-card h1,
+.passage .noshell-card h2,
+.passage .noshell-card h3,
+.passage .noshell-card p:first-child { margin-top: 0; }
+
+.passage .noshell-card p:last-child { margin-bottom: 0; }
+
+.passage .noshell-image-wrap {
+	width: 100%;
+	max-width: 100%;
+	margin: 1.5rem auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 0;
+}
+
+.passage .noshell-image-wrap img {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	height: auto;
+	max-height: 45vh;
+	object-fit: cover;
+	border-radius: 1rem;
+}
+
+.passage .noshell-card a {
+	display: inline-block;
+	margin-top: 1rem;
+	padding: 0.8rem 1.25rem;
+	border: 2px solid var(--color-white);
+	border-radius: 0.9rem;
+	color: var(--color-white);
+	text-decoration: none;
+	font-weight: 600;
+	background: transparent;
+}
+
+.passage .noshell-card a:hover,
+.passage .noshell-card a:focus-visible {
+	background: rgba(255, 255, 255, 0.14);
+	outline: 3px solid var(--color-focus);
+	outline-offset: 3px;
+}
+
+.passage .noshell-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	margin-top: 1.5rem;
+}
+
+.passage .noshell-top-controls {
+	display: flex;
+	justify-content: flex-end;
 	margin-bottom: 1rem;
 }
 
-.bottom-controls {
-	margin-top: 2rem;
+.noshell-card ul  { padding-left: 1.25rem; }
+.noshell-card li  { margin-bottom: 0.5rem; line-height: 1.6; }
+
+
+/* =============================================================
+   7. TYPOGRAPHY
+   -----------------------------------------------------------------
+   Base passage text and title styles.
+   ============================================================= */
+
+.story-title {
+	font-size: 2.2rem;
+	font-weight: 700;
+	line-height: 1.2;
+	margin: 0 0 1rem 0;
 }
 
+.story-title,
+.passage-text > *:first-child,
+.passage-text p:first-child { margin-top: 0; }
+
+.passage-text > *:last-child,
+.passage-text p:last-child  { margin-bottom: 0; }
+
+.passage-text {
+	font-size: 1.2rem;
+	line-height: 1.7;
+	margin-bottom: 2rem;
+}
+
+
+/* =============================================================
+   8. CONTROLS
+   -----------------------------------------------------------------
+   Buttons, settings panel, SugarCube dialog.
+   ============================================================= */
+
+/* Shared button style */
 .ui-btn {
 	display: inline-flex;
 	align-items: center;
@@ -750,14 +586,123 @@ body.theme-dark .passage .noshell-page {
 	background: rgba(0, 0, 0, 0.06);
 }
 
+body.theme-dark .story-right .ui-btn:hover,
+body.theme-dark .story-right .ui-btn:focus-visible {
+	background: var(--color-dark-hover);
+}
+
 .ui-btn:active {
 	transform: translateY(1px);
 }
 
+/* Control bar positioning */
+.top-controls,
+.bottom-controls {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 0.75rem;
+}
 
-/* =========================================================
-   Choice Styling
-   ========================================================= */
+.top-controls    { margin-bottom: 1rem; }
+.bottom-controls { margin-top: 2rem; }
+
+/* Focus states */
+a:focus-visible,
+button:focus-visible,
+.ui-btn:focus-visible {
+	outline: 3px solid var(--color-focus);
+	outline-offset: 3px;
+}
+
+/* Settings panel (inside dialog) */
+.settings-panel {
+	font-size: 1rem;
+	line-height: 1.5;
+}
+
+.settings-panel fieldset {
+	margin: 0 0 1.25rem 0;
+	padding: 0;
+	border: 0;
+}
+
+.settings-panel legend {
+	font-weight: 700;
+	margin-bottom: 0.5rem;
+}
+
+.settings-panel label {
+	display: block;
+	margin: 0.35rem 0;
+	cursor: pointer;
+}
+
+.settings-panel input[type="radio"] {
+	margin-right: 0.5rem;
+}
+
+.settings-actions {
+	margin-top: 1rem;
+	display: flex;
+	gap: 0.75rem;
+	flex-wrap: wrap;
+}
+
+.settings-actions button {
+	font: inherit;
+	padding: 0.7rem 1rem;
+	border: 2px solid var(--color-border);
+	border-radius: 0.75rem;
+	background: var(--color-surface);
+	color: var(--color-text);
+	cursor: pointer;
+}
+
+/* SugarCube dialog */
+#ui-dialog-titlebar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.75rem 1rem;
+	background: var(--color-dialog-titlebar-bg) !important;
+	color: var(--color-dialog-titlebar-text) !important;
+	border-bottom: 1px solid var(--color-border-mid) !important;
+}
+
+#ui-dialog-title {
+	color: var(--color-dialog-titlebar-text) !important;
+	text-transform: none !important;
+	letter-spacing: normal !important;
+	font-weight: 600;
+	font-size: 1.2rem;
+}
+
+#ui-dialog-titlebar-close,
+#ui-dialog-titlebar-close::before {
+	color: var(--color-dialog-titlebar-text) !important;
+	fill: var(--color-dialog-titlebar-text) !important;
+	stroke: var(--color-dialog-titlebar-text) !important;
+	opacity: 1 !important;
+}
+
+#ui-dialog-body {
+	background: var(--color-surface);
+	color: var(--color-text);
+}
+
+#ui-dialog-body input[type="radio"] {
+	accent-color: var(--color-focus);
+}
+
+
+/* =============================================================
+   9. CHOICES
+   -----------------------------------------------------------------
+   Learner response cards. Edit border-radius, padding, and
+   hover colors here. The ::before icon uses Font Awesome.
+   ============================================================= */
 
 .choices {
 	display: flex;
@@ -798,39 +743,6 @@ body.theme-dark .passage .noshell-page {
 	outline-offset: 4px;
 }
 
-/* =========================================================
-   Accessibility / Focus States
-   ========================================================= */
-
-a:focus-visible,
-button:focus-visible,
-.ui-btn:focus-visible {
-	outline: 3px solid var(--color-focus);
-	outline-offset: 3px;
-}
-
-/* Theme: dark */
-body.theme-dark {
-	background: var(--color-dark-bg);
-	color: var(--color-text);
-}
-
-body.theme-dark .story-right {
-	background: var(--color-dark-panel);
-	color: var(--color-text);
-}
-
-body.theme-dark .choices a {
-	background: var(--color-dark-surface);
-	color: var(--color-text);
-	border-color: var(--color-border-light);
-}
-
-body.theme-dark .story-right .ui-btn:hover,
-body.theme-dark .story-right .ui-btn:focus-visible {
-	background: var(--color-dark-hover);
-}
-
 body.theme-dark .choices a:hover,
 body.theme-dark .choices a:focus-visible {
 	background: var(--color-dark-hover-strong);
@@ -838,9 +750,232 @@ body.theme-dark .choices a:focus-visible {
 }
 
 
-/* =========================================================
-   Responsive
-   ========================================================= */
+/* =============================================================
+   10. SCENE ELEMENTS
+   -----------------------------------------------------------------
+   Components specific to the counseling simulation passages:
+   scene labels, client dialogue blockquotes, counselor response
+   callouts, and expandable feedback notes.
+
+   ★ If you're building a different scenario, you can replace
+   or remove these — they are not required by the template.
+   ============================================================= */
+
+/* Scene label (e.g. "Decision Point 1: Initial Response") */
+.scene-label {
+	font-size: 0.85rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--color-primary-dark);
+	margin-bottom: 0.5rem;
+}
+
+body.theme-dark .scene-label {
+	color: var(--color-primary-light);
+}
+
+/* Client dialogue */
+.passage-text blockquote {
+	margin: 1.25rem 0;
+	padding: 1rem 1.25rem;
+	border-left: 4px solid var(--color-primary-dark);
+	background: var(--color-primary-bg);
+	border-radius: 0 0.75rem 0.75rem 0;
+	font-style: italic;
+	line-height: 1.7;
+}
+
+body.theme-dark .passage-text blockquote {
+	border-left-color: var(--color-primary-light);
+}
+
+/* Counselor response callout */
+.counselor-response {
+	padding: 0.75rem 1rem;
+	background: var(--color-primary-bg);
+	border-radius: 0.75rem;
+	margin-bottom: 1rem;
+}
+
+/* Feedback note box */
+.feedback-note {
+	margin: 1.5rem 0;
+	padding: 1rem 1.25rem;
+	border: 2px solid var(--color-border-light);
+	border-radius: 1rem;
+	background: var(--color-surface-alt);
+}
+
+.feedback-summary {
+	margin: 0;
+	font-size: 1rem;
+	line-height: 1.5;
+}
+
+/* Expandable detail inside feedback notes */
+.feedback-detail {
+	margin-top: 0.75rem;
+}
+
+.feedback-detail summary {
+	cursor: pointer;
+	color: var(--color-primary-dark);
+	font-weight: 600;
+	font-size: 0.95rem;
+	padding: 0.25rem 0;
+	list-style: none;
+}
+
+.feedback-detail summary::-webkit-details-marker { display: none; }
+.feedback-detail summary::before { content: "▸ "; }
+details.feedback-detail[open] summary::before { content: "▾ "; }
+
+body.theme-dark .feedback-detail summary {
+	color: var(--color-primary-light);
+}
+
+.feedback-expanded {
+	margin-top: 0.75rem;
+	padding-top: 0.75rem;
+	border-top: 1px solid var(--color-border-soft);
+	font-size: 0.95rem;
+	line-height: 1.7;
+}
+
+.feedback-expanded p { margin: 0.75rem 0; }
+.feedback-expanded p:first-child { margin-top: 0; }
+
+
+/* =============================================================
+   11. RECAP PAGE
+   -----------------------------------------------------------------
+   Decision cards and collapsible sections for the session
+   debrief. Cards are white cutouts in a horizontal row.
+
+   Rating label colors use --color-rating-* variables, which
+   are saturation variants of --color-primary (no red/green).
+   ============================================================= */
+
+/* Card row */
+.recap-decisions {
+	display: flex;
+	gap: 1rem;
+	margin-bottom: 1.75rem;
+}
+
+/* Individual card */
+.recap-decision-card {
+	flex: 1 1 0;
+	min-width: 0;
+	background: var(--color-surface);
+	color: var(--color-text);
+	border-radius: 1rem;
+	padding: 1.25rem 1.25rem 1rem;
+	border-left: 5px solid var(--color-border-light);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+body.theme-dark .recap-decision-card {
+	background: var(--color-dark-surface-alt);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Left border color by quality */
+.recap-decision-card[data-quality="strong"]    { border-left-color: var(--color-rating-strong); }
+.recap-decision-card[data-quality="adequate"]  { border-left-color: var(--color-rating-adequate); }
+.recap-decision-card[data-quality="concerning"] { border-left-color: var(--color-rating-concerning); }
+
+/* Card content */
+.recap-decision-num {
+	font-size: 0.75rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--color-primary-dark);
+	margin: 0 0 0.25rem 0;
+}
+
+body.theme-dark .recap-decision-num {
+	color: var(--color-primary-light);
+}
+
+.recap-decision-title {
+	font-size: 1rem;
+	font-weight: 700;
+	margin: 0 0 0.65rem 0;
+	line-height: 1.3;
+}
+
+.recap-choice-text {
+	font-size: 0.9rem;
+	line-height: 1.55;
+	margin: 0 0 0.75rem 0;
+	opacity: 0.8;
+}
+
+/* Rating label — colored by primary saturation */
+.recap-rating-label {
+	display: inline-block;
+	font-size: 0.8rem;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+}
+
+.recap-decision-card[data-quality="strong"]    .recap-rating-label { color: var(--color-rating-strong); }
+.recap-decision-card[data-quality="adequate"]  .recap-rating-label { color: var(--color-rating-adequate); }
+.recap-decision-card[data-quality="concerning"] .recap-rating-label { color: var(--color-rating-concerning); }
+
+/* On the teal noshell card (light theme), lighten for contrast */
+.noshell-card .recap-decision-card[data-quality="strong"]    .recap-rating-label { color: color-mix(in srgb, var(--color-primary) 70%, white); }
+.noshell-card .recap-decision-card[data-quality="adequate"]  .recap-rating-label { color: color-mix(in srgb, var(--color-primary) 45%, white); }
+.noshell-card .recap-decision-card[data-quality="concerning"] .recap-rating-label { color: color-mix(in srgb, var(--color-primary) 25%, white); }
+
+/* Collapsible sections (e.g. Further Reading) */
+.recap-collapsible {
+	margin-top: 1rem;
+}
+
+.recap-collapsible summary {
+	cursor: pointer;
+	color: rgba(255, 255, 255, 0.7);
+	font-weight: 600;
+	font-size: 0.95rem;
+	padding: 0.5rem 0;
+	list-style: none;
+	transition: color 0.15s ease;
+}
+
+.recap-collapsible summary::-webkit-details-marker { display: none; }
+.recap-collapsible summary::before { content: "▸ "; }
+.recap-collapsible[open] summary::before { content: "▾ "; }
+.recap-collapsible summary:hover { color: rgba(255, 255, 255, 0.95); }
+
+.recap-collapsible ul {
+	padding-left: 1.25rem;
+	margin: 0.5rem 0 0 0;
+}
+
+.recap-collapsible li {
+	margin-bottom: 0.5rem;
+	line-height: 1.6;
+}
+
+.recap-collapsible + .recap-collapsible {
+	border-top: 1px solid rgba(255, 255, 255, 0.12);
+	padding-top: 0.75rem;
+}
+
+body.theme-dark .recap-collapsible + .recap-collapsible {
+	border-top-color: var(--color-border-mid);
+}
+
+
+/* =============================================================
+   12. RESPONSIVE
+   -----------------------------------------------------------------
+   Breakpoints for tablets and phones.
+   ============================================================= */
 
 @media (max-width: 900px) {
 	.story-shell {
@@ -886,212 +1021,14 @@ body.theme-dark .choices a:focus-visible {
 	}
 }
 
-/* =========================================================
-   All existing CSS from your template goes here unchanged.
-   Below are ADDITIONS for the counseling simulation.
-   ========================================================= */
+@media (max-width: 768px) {
+	.recap-decisions {
+		flex-direction: column;
+	}
 
-/* Scene labels */
-.scene-label {
-	font-size: 0.85rem;
-	font-weight: 700;
-	text-transform: uppercase;
-	letter-spacing: 0.05em;
-	color: var(--color-primary-dark);
-	margin-bottom: 0.5rem;
-}
-
-body.theme-dark .scene-label {
-	color: var(--color-primary-light);
-}
-
-/* Blockquotes for client dialogue */
-.passage-text blockquote {
-	margin: 1.25rem 0;
-	padding: 1rem 1.25rem;
-	border-left: 4px solid var(--color-primary-dark);
-	background: var(--color-primary-bg);
-	border-radius: 0 0.75rem 0.75rem 0;
-	font-style: italic;
-	line-height: 1.7;
-}
-
-body.theme-dark .passage-text blockquote {
-	background: var(--color-primary-bg-strong);
-	border-left-color: var(--color-primary-light);
-}
-
-/* Counselor response callout */
-.counselor-response {
-	padding: 0.75rem 1rem;
-	background: var(--color-primary-bg);
-	border-radius: 0.75rem;
-	margin-bottom: 1rem;
-}
-
-body.theme-dark .counselor-response {
-	background: var(--color-primary-bg-strong);
-}
-
-/* Feedback note box */
-.feedback-note {
-	margin: 1.5rem 0;
-	padding: 1rem 1.25rem;
-	border: 2px solid var(--color-border-light);
-	border-radius: 1rem;
-	background: var(--color-surface-alt);
-}
-
-body.theme-dark .feedback-note {
-	background: var(--color-dark-surface-alt);
-	border-color: var(--color-border-mid);
-}
-
-.feedback-summary {
-	margin: 0;
-	font-size: 1rem;
-	line-height: 1.5;
-}
-
-/* Expandable detail */
-.feedback-detail {
-	margin-top: 0.75rem;
-}
-
-.feedback-detail summary {
-	cursor: pointer;
-	color: var(--color-primary-dark);
-	font-weight: 600;
-	font-size: 0.95rem;
-	padding: 0.25rem 0;
-	list-style: none;
-}
-
-.feedback-detail summary::-webkit-details-marker {
-	display: none;
-}
-
-.feedback-detail summary::before {
-	content: "▸ ";
-}
-
-details[open] .feedback-detail summary::before,
-.feedback-detail[open] summary::before {
-	content: "▾ ";
-}
-
-/* Fix: target the parent details element */
-details.feedback-detail[open] summary::before {
-	content: "▾ ";
-}
-
-body.theme-dark .feedback-detail summary {
-	color: var(--color-primary-light);
-}
-
-.feedback-expanded {
-	margin-top: 0.75rem;
-	padding-top: 0.75rem;
-	border-top: 1px solid var(--color-border-soft);
-	font-size: 0.95rem;
-	line-height: 1.7;
-}
-
-body.theme-dark .feedback-expanded {
-	border-top-color: var(--color-border-mid);
-}
-
-.feedback-expanded p {
-	margin: 0.75rem 0;
-}
-
-.feedback-expanded p:first-child {
-	margin-top: 0;
-}
-
-/* Recap styles */
-.recap-section {
-	margin-bottom: 1.75rem;
-	padding-bottom: 1.25rem;
-	border-bottom: 1px solid rgba(255,255,255,0.2);
-}
-
-.recap-section:last-child {
-	border-bottom: none;
-}
-
-.recap-section h2,
-.recap-section h3 {
-	margin: 0 0 0.5rem 0;
-	font-size: 1.1rem;
-}
-
-.recap-section ul {
-	margin: 0.5rem 0;
-	padding-left: 1.5rem;
-}
-
-.recap-section li {
-	margin-bottom: 0.5rem;
-	line-height: 1.6;
-}
-
-.recap-rating-line {
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-	flex-wrap: wrap;
-	margin: 0.75rem 0 0 0;
-}
-
-.recap-quality {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.5rem;
-	color: var(--color-white);
-	font-weight: 600;
-	vertical-align: middle;
-}
-
-.recap-icon {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 1.5rem;
-	height: 1.5rem;
-	border-radius: 50%;
-	background: var(--color-white);
-	font-size: 1.2rem;
-	line-height: 1;
-	font-weight: 900;
-	flex: 0 0 auto;
-}
-
-.recap-label {
-	display: inline-block;
-	line-height: 1.2;
-}
-
-/* Color only the icon */
-.recap-strong .recap-icon {
-	color: var(--color-success);
-}
-
-.recap-adequate .recap-icon {
-	color: var(--color-warning);
-}
-
-.recap-concerning .recap-icon {
-	color: var(--color-danger);
-}
-/* Noshell card overrides for recap readability */
-.noshell-card ul {
-	padding-left: 1.25rem;
-}
-
-.noshell-card li {
-	margin-bottom: 0.5rem;
-	line-height: 1.6;
+	.recap-decision-card {
+		padding: 1rem 1.15rem;
+	}
 }</style><script role="script" id="twine-user-script" type="text/twine-javascript">/* ---------------------------------------------------------
    SugarCube UI Cleanup
    --------------------------------------------------------- */
@@ -1130,8 +1067,8 @@ setup.ensurePrefs = function () {
 setup.applyPrefs = function () {
 	setup.ensurePrefs();
 
-	const prefs = State.variables.prefs;
-	const body = document.body;
+	var prefs = State.variables.prefs;
+	var body = document.body;
 
 	body.classList.remove(
 		'theme-light', 'theme-dark',
@@ -1149,8 +1086,8 @@ setup.applyPrefs = function () {
 setup.savePrefsFromDialog = function () {
 	setup.ensurePrefs();
 
-	const checked = function (name) {
-		const el = document.querySelector('input[name="' + name + '"]:checked');
+	var checked = function (name) {
+		var el = document.querySelector('input[name="' + name + '"]:checked');
 		return el ? el.value : null;
 	};
 
@@ -1168,7 +1105,7 @@ setup.resetPrefs = function () {
 };
 
 setup.settingsRadio = function (groupName, value, labelText, currentValue) {
-	const checked = value === currentValue ? ' checked' : '';
+	var checked = value === currentValue ? ' checked' : '';
 	return (
 		'<label>' +
 			'<input type="radio" name="' + groupName + '" value="' + value + '"' + checked + '>' +
@@ -1182,9 +1119,9 @@ setup.settingsRadio = function (groupName, value, labelText, currentValue) {
    --------------------------------------------------------- */
 setup.openSettings = function () {
 	setup.ensurePrefs();
-	const prefs = State.variables.prefs;
+	var prefs = State.variables.prefs;
 
-	const html =
+	var html =
 		'<div class="settings-panel">' +
 
 			'<fieldset>' +
@@ -1225,13 +1162,13 @@ setup.openSettings = function () {
 	Dialog.open();
 
 	setTimeout(function () {
-		const firstInput = document.querySelector('.settings-panel input[type="radio"]');
+		var firstInput = document.querySelector('.settings-panel input[type="radio"]');
 		if (firstInput) {
 			firstInput.focus();
 		}
 
-		const saveBtn = document.getElementById('settings-save');
-		const resetBtn = document.getElementById('settings-reset');
+		var saveBtn = document.getElementById('settings-save');
+		var resetBtn = document.getElementById('settings-reset');
 
 		if (saveBtn) {
 			saveBtn.addEventListener('click', function () {
@@ -1268,7 +1205,7 @@ $(document).off('keydown.dialogEsc').on('keydown.dialogEsc', function (ev) {
 
 /* Font Awesome */
 (function () {
-	const fa = document.createElement('link');
+	var fa = document.createElement('link');
 	fa.rel = 'stylesheet';
 	fa.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css';
 	fa.crossOrigin = 'anonymous';
@@ -1277,23 +1214,34 @@ $(document).off('keydown.dialogEsc').on('keydown.dialogEsc', function (ev) {
 
 /* OpenDyslexic */
 (function () {
-	const fontLink = document.createElement('link');
+	var fontLink = document.createElement('link');
 	fontLink.rel = 'stylesheet';
 	fontLink.href = 'https://cdn.jsdelivr.net/npm/@fontsource/opendyslexic@5.2.5/index.css';
 	document.head.appendChild(fontLink);
 })();
 
 /* ---------------------------------------------------------
+   Apply Preferences on EVERY Passage
+   This runs before the shell injection so body classes
+   are always current, even on noshell-tagged passages.
+   --------------------------------------------------------- */
+$(document).on(':passagestart', function () {
+	setup.ensurePrefs();
+	setup.applyPrefs();
+});
+
+/* ---------------------------------------------------------
    Shared Passage Shell Injection
+   Only runs for passages NOT tagged 'noshell'.
    --------------------------------------------------------- */
 $(document).on(':passagerender', function (ev) {
-	const passageEl = ev.content;
+	var passageEl = ev.content;
 	if (!passageEl) {
 		return;
 	}
 
-	const passageObj = Story.get(State.passage);
-	const tags = passageObj ? passageObj.tags : [];
+	var passageObj = Story.get(State.passage);
+	var tags = passageObj ? passageObj.tags : [];
 
 	if (tags.includes('noshell')) {
 		return;
@@ -1303,55 +1251,48 @@ $(document).on(':passagerender', function (ev) {
 		return;
 	}
 
-	setup.ensurePrefs();
-	setup.applyPrefs();
-
-	const originalContent = document.createDocumentFragment();
+	var originalContent = document.createDocumentFragment();
 	while (passageEl.firstChild) {
 		originalContent.appendChild(passageEl.firstChild);
 	}
 
-	const shell = document.createElement('div');
+	var shell = document.createElement('div');
 	shell.className = 'story-shell';
 
-	shell.innerHTML = `
-		<div class="story-left">
-			<div class="top-controls">
-				<button class="ui-btn settings-button" type="button">
-				<i class="fa-solid fa-universal-access" aria-hidden="true"></i>
-					Settings
-				</button>
-			</div>
+	shell.innerHTML =
+		'<div class="story-left">' +
+			'<div class="top-controls">' +
+				'<button class="ui-btn settings-button" type="button">' +
+					'<i class="fa-solid fa-universal-access" aria-hidden="true"></i>' +
+					' Settings' +
+				'</button>' +
+			'</div>' +
+			'<div class="story-brand">' +
+				'<h1 class="story-title"></h1>' +
+			'</div>' +
+			'<div class="story-image-wrap"></div>' +
+		'</div>' +
+		'<div class="story-right">' +
+			'<div class="passage-wrap">' +
+				'<div class="passage-text"></div>' +
+				'<div class="bottom-controls"></div>' +
+			'</div>' +
+		'</div>';
 
-			<div class="story-brand">
-				<h1 class="story-title"></h1>
-			</div>
-
-			<div class="story-image-wrap"></div>
-		</div>
-
-		<div class="story-right">
-			<div class="passage-wrap">
-				<div class="passage-text"></div>
-				<div class="bottom-controls"></div>
-			</div>
-		</div>
-	`;
-
-	const titleEl = shell.querySelector('.story-title');
+	var titleEl = shell.querySelector('.story-title');
 	titleEl.textContent = State.variables.uiTitle || '';
 
-	const imageWrap = shell.querySelector('.story-image-wrap');
-	const imgSrc = State.variables.uiImage || '';
-	const imgAlt = State.variables.uiImageAlt || '';
+	var imageWrap = shell.querySelector('.story-image-wrap');
+	var imgSrc = State.variables.uiImage || '';
+	var imgAlt = State.variables.uiImageAlt || '';
 
 	if (imgSrc.trim() !== '') {
-		const img = document.createElement('img');
+		var img = document.createElement('img');
 		img.src = imgSrc;
 		img.alt = imgAlt;
 		imageWrap.appendChild(img);
 	} else {
-		const placeholder = document.createElement('div');
+		var placeholder = document.createElement('div');
 		placeholder.className = 'story-image-placeholder';
 		placeholder.setAttribute('aria-hidden', 'true');
 		imageWrap.appendChild(placeholder);
@@ -1360,7 +1301,7 @@ $(document).on(':passagerender', function (ev) {
 	shell.querySelector('.passage-text').appendChild(originalContent);
 
 	if (State.length > 1) {
-		const backBtn = document.createElement('button');
+		var backBtn = document.createElement('button');
 		backBtn.className = 'ui-btn';
 		backBtn.type = 'button';
 		backBtn.textContent = 'Back';
@@ -1368,7 +1309,7 @@ $(document).on(':passagerender', function (ev) {
 		shell.querySelector('.bottom-controls').appendChild(backBtn);
 	}
 
-	const settingsBtn = shell.querySelector('.settings-button');
+	var settingsBtn = shell.querySelector('.settings-button');
 	if (settingsBtn) {
 		settingsBtn.addEventListener('click', setup.openSettings);
 	}
@@ -1377,7 +1318,7 @@ $(document).on(':passagerender', function (ev) {
 });
 
 /* ---------------------------------------------------------
-   Global Settings Button Handlers
+   Global Settings Button Handlers (for noshell pages)
    --------------------------------------------------------- */
 $(document).off('click.noshellSettings', '.noshell-settings-button')
 	.on('click.noshellSettings', '.noshell-settings-button', function () {
@@ -1720,62 +1661,69 @@ $(document).on(':storyready', function () {
 
 &lt;div class=&quot;choices&quot;&gt;
 	[[Proceed to Session Debrief|Recap]]
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="10" name="Recap" tags="noshell" position="300,1100" size="100,100">&lt;div class=&quot;noshell-page&quot;&gt;
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="10" name="Recap" tags="noshell" position="300,1100" size="100,100">&lt;!-- Recap passage (noshell tag) --&gt;
+&lt;div class=&quot;noshell-page&quot;&gt;
 	&lt;div class=&quot;noshell-card noshell-card-wide&quot;&gt;
 		&lt;h1&gt;Session Debrief&lt;/h1&gt;
-		&lt;p&gt;Here is a summary of your clinical decisions and their impact:&lt;/p&gt;
-		&lt;div class=&quot;recap-section&quot;&gt;
-			&lt;h2&gt;Decision 1: Initial Response to Crisis Statement&lt;/h2&gt;
-			&lt;p&gt;&lt;strong&gt;Your choice:&lt;/strong&gt; &lt;&lt;print $choice1&gt;&gt;&lt;/p&gt;
-			&lt;p class=&quot;recap-rating-line&quot;&gt;
-				&lt;strong&gt;Rating:&lt;/strong&gt;
-				&lt;span class=&quot;recap-quality&quot; @class=&quot;&#39;recap-&#39; + $choice1quality&quot;&gt;
-					&lt;span aria-hidden=&quot;true&quot; class=&quot;recap-icon&quot;&gt;&lt;&lt;if $choice1quality is &quot;strong&quot;&gt;&gt;▲&lt;&lt;elseif $choice1quality is &quot;adequate&quot;&gt;&gt;◆&lt;&lt;elseif $choice1quality is &quot;concerning&quot;&gt;&gt;▼&lt;&lt;/if&gt;&gt;&lt;/span&gt;
-					&lt;span class=&quot;recap-label&quot;&gt;&lt;&lt;if $choice1quality is &quot;strong&quot;&gt;&gt;Effective&lt;&lt;elseif $choice1quality is &quot;adequate&quot;&gt;&gt;Partially Effective&lt;&lt;elseif $choice1quality is &quot;concerning&quot;&gt;&gt;Needs Attention&lt;&lt;/if&gt;&gt;&lt;/span&gt;
+		&lt;p&gt;Here&#39;s how your clinical decisions shaped the session:&lt;/p&gt;
+
+		&lt;!-- Decision cards --&gt;
+		&lt;div class=&quot;recap-decisions&quot;&gt;
+
+			&lt;div class=&quot;recap-decision-card&quot; data-quality=&quot;&lt;&lt;print $choice1quality&gt;&gt;&quot;&gt;
+				&lt;p class=&quot;recap-decision-num&quot;&gt;Decision 1&lt;/p&gt;
+				&lt;p class=&quot;recap-decision-title&quot;&gt;Initial Response to Crisis Statement&lt;/p&gt;
+				&lt;p class=&quot;recap-choice-text&quot;&gt;&lt;&lt;print $choice1&gt;&gt;&lt;/p&gt;
+				&lt;span class=&quot;recap-rating-label&quot;&gt;
+					&lt;&lt;if $choice1quality is &quot;strong&quot;&gt;&gt;Well aligned with best practice
+					&lt;&lt;elseif $choice1quality is &quot;adequate&quot;&gt;&gt;Partially aligned — room to refine
+					&lt;&lt;elseif $choice1quality is &quot;concerning&quot;&gt;&gt;Worth revisiting
+					&lt;&lt;/if&gt;&gt;
 				&lt;/span&gt;
-			&lt;/p&gt;
-		&lt;/div&gt;
-		&lt;div class=&quot;recap-section&quot;&gt;
-			&lt;h2&gt;Decision 2: Engaging with Alex&#39;s Identity&lt;/h2&gt;
-			&lt;p&gt;&lt;strong&gt;Your choice:&lt;/strong&gt; &lt;&lt;print $choice2&gt;&gt;&lt;/p&gt;
-			&lt;p class=&quot;recap-rating-line&quot;&gt;
-				&lt;strong&gt;Rating:&lt;/strong&gt;
-				&lt;span class=&quot;recap-quality&quot; @class=&quot;&#39;recap-&#39; + $choice2quality&quot;&gt;
-					&lt;span aria-hidden=&quot;true&quot; class=&quot;recap-icon&quot;&gt;&lt;&lt;if $choice2quality is &quot;strong&quot;&gt;&gt;▲&lt;&lt;elseif $choice2quality is &quot;adequate&quot;&gt;&gt;◆&lt;&lt;elseif $choice2quality is &quot;concerning&quot;&gt;&gt;▼&lt;&lt;/if&gt;&gt;&lt;/span&gt;
-					&lt;span class=&quot;recap-label&quot;&gt;&lt;&lt;if $choice2quality is &quot;strong&quot;&gt;&gt;Effective&lt;&lt;elseif $choice2quality is &quot;adequate&quot;&gt;&gt;Partially Effective&lt;&lt;elseif $choice2quality is &quot;concerning&quot;&gt;&gt;Needs Attention&lt;&lt;/if&gt;&gt;&lt;/span&gt;
+			&lt;/div&gt;
+
+			&lt;div class=&quot;recap-decision-card&quot; data-quality=&quot;&lt;&lt;print $choice2quality&gt;&gt;&quot;&gt;
+				&lt;p class=&quot;recap-decision-num&quot;&gt;Decision 2&lt;/p&gt;
+				&lt;p class=&quot;recap-decision-title&quot;&gt;Engaging with Alex&#39;s Identity&lt;/p&gt;
+				&lt;p class=&quot;recap-choice-text&quot;&gt;&lt;&lt;print $choice2&gt;&gt;&lt;/p&gt;
+				&lt;span class=&quot;recap-rating-label&quot;&gt;
+					&lt;&lt;if $choice2quality is &quot;strong&quot;&gt;&gt;Well aligned with best practice
+					&lt;&lt;elseif $choice2quality is &quot;adequate&quot;&gt;&gt;Partially aligned — room to refine
+					&lt;&lt;elseif $choice2quality is &quot;concerning&quot;&gt;&gt;Worth revisiting
+					&lt;&lt;/if&gt;&gt;
 				&lt;/span&gt;
-			&lt;/p&gt;
-		&lt;/div&gt;
-		&lt;div class=&quot;recap-section&quot;&gt;
-			&lt;h2&gt;Decision 3: Safety Planning&lt;/h2&gt;
-			&lt;p&gt;&lt;strong&gt;Your choice:&lt;/strong&gt; &lt;&lt;print $choice3&gt;&gt;&lt;/p&gt;
-			&lt;p class=&quot;recap-rating-line&quot;&gt;
-				&lt;strong&gt;Rating:&lt;/strong&gt;
-				&lt;span class=&quot;recap-quality&quot; @class=&quot;&#39;recap-&#39; + $choice3quality&quot;&gt;
-					&lt;span aria-hidden=&quot;true&quot; class=&quot;recap-icon&quot;&gt;&lt;&lt;if $choice3quality is &quot;strong&quot;&gt;&gt;▲&lt;&lt;elseif $choice3quality is &quot;adequate&quot;&gt;&gt;◆&lt;&lt;elseif $choice3quality is &quot;concerning&quot;&gt;&gt;▼&lt;&lt;/if&gt;&gt;&lt;/span&gt;
-					&lt;span class=&quot;recap-label&quot;&gt;&lt;&lt;if $choice3quality is &quot;strong&quot;&gt;&gt;Effective&lt;&lt;elseif $choice3quality is &quot;adequate&quot;&gt;&gt;Partially Effective&lt;&lt;elseif $choice3quality is &quot;concerning&quot;&gt;&gt;Needs Attention&lt;&lt;/if&gt;&gt;&lt;/span&gt;
+			&lt;/div&gt;
+
+			&lt;div class=&quot;recap-decision-card&quot; data-quality=&quot;&lt;&lt;print $choice3quality&gt;&gt;&quot;&gt;
+				&lt;p class=&quot;recap-decision-num&quot;&gt;Decision 3&lt;/p&gt;
+				&lt;p class=&quot;recap-decision-title&quot;&gt;Safety Planning&lt;/p&gt;
+				&lt;p class=&quot;recap-choice-text&quot;&gt;&lt;&lt;print $choice3&gt;&gt;&lt;/p&gt;
+				&lt;span class=&quot;recap-rating-label&quot;&gt;
+					&lt;&lt;if $choice3quality is &quot;strong&quot;&gt;&gt;Well aligned with best practice
+					&lt;&lt;elseif $choice3quality is &quot;adequate&quot;&gt;&gt;Partially aligned — room to refine
+					&lt;&lt;elseif $choice3quality is &quot;concerning&quot;&gt;&gt;Worth revisiting
+					&lt;&lt;/if&gt;&gt;
 				&lt;/span&gt;
-			&lt;/p&gt;
+			&lt;/div&gt;
+
 		&lt;/div&gt;
 
-		&lt;div class=&quot;recap-section&quot;&gt;
-			&lt;h2&gt;Key Takeaways&lt;/h2&gt;
-			&lt;ul&gt;
-				&lt;li&gt;&lt;strong&gt;Safety and identity are intertwined.&lt;/strong&gt; For LGBTQ+ clients, crisis response cannot be separated from identity affirmation. Family rejection is a clinical risk factor, not just a family conflict.&lt;/li&gt;
-				&lt;li&gt;&lt;strong&gt;Timing and sequence matter.&lt;/strong&gt; Validation before assessment, affirmation before exploration, collaboration before protocol. The order communicates your priorities.&lt;/li&gt;
-				&lt;li&gt;&lt;strong&gt;Cultural competence is not just knowledge — it&#39;s practice.&lt;/strong&gt; Knowing that LGBTQ+ youth face elevated risk is different from being able to respond to a specific person in a specific moment with skill and care.&lt;/li&gt;
-			&lt;/ul&gt;
-		&lt;/div&gt;
+		&lt;h2&gt;Key Takeaways&lt;/h2&gt;
+		&lt;ul&gt;
+			&lt;li&gt;&lt;strong&gt;Safety and identity are intertwined.&lt;/strong&gt; For LGBTQ+ clients, crisis response cannot be separated from identity affirmation. Family rejection is a clinical risk factor, not just a family conflict.&lt;/li&gt;
+			&lt;li&gt;&lt;strong&gt;Timing and sequence matter.&lt;/strong&gt; Validation before assessment, affirmation before exploration, collaboration before protocol. The order communicates your priorities.&lt;/li&gt;
+			&lt;li&gt;&lt;strong&gt;Cultural competence is not just knowledge — it&#39;s practice.&lt;/strong&gt; Knowing that LGBTQ+ youth face elevated risk is different from being able to respond to a specific person in a specific moment with skill and care.&lt;/li&gt;
+		&lt;/ul&gt;
 
-		&lt;div class=&quot;recap-section&quot;&gt;
-			&lt;h2&gt;Further Reading&lt;/h2&gt;
+		&lt;details class=&quot;recap-collapsible&quot;&gt;
+			&lt;summary&gt;Further Reading&lt;/summary&gt;
 			&lt;ul&gt;
 				&lt;li&gt;Ryan, C., et al. (2009). Family rejection as a predictor of negative health outcomes in white and Latino LGB young adults. &lt;em&gt;Pediatrics, 123&lt;/em&gt;(1), 346-352.&lt;/li&gt;
 				&lt;li&gt;Meyer, I. H. (2003). Prejudice, social stress, and mental health in lesbian, gay, and bisexual populations. &lt;em&gt;Psychological Bulletin, 129&lt;/em&gt;(5), 674-697.&lt;/li&gt;
 				&lt;li&gt;Stanley, B., &amp;amp; Brown, G. K. (2012). Safety planning intervention: A brief intervention to mitigate suicide risk. &lt;em&gt;Cognitive and Behavioral Practice, 19&lt;/em&gt;(2), 256-264.&lt;/li&gt;
 				&lt;li&gt;APA (2021). &lt;em&gt;Guidelines for Psychological Practice with Sexual Minority Persons.&lt;/em&gt;&lt;/li&gt;
 			&lt;/ul&gt;
-		&lt;/div&gt;
+		&lt;/details&gt;
 
 		&lt;div class=&quot;noshell-actions&quot;&gt;
 			[[Restart|Intro]]
