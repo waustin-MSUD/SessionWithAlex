@@ -1029,33 +1029,62 @@ body.theme-dark .recap-collapsible + .recap-collapsible {
 	.recap-decision-card {
 		padding: 1rem 1.15rem;
 	}
-}</style><script role="script" id="twine-user-script" type="text/twine-javascript">/* ---------------------------------------------------------
-   SugarCube UI Cleanup
-   --------------------------------------------------------- */
+}</style><script role="script" id="twine-user-script" type="text/twine-javascript">/* =============================================================
+
+   STORY TEMPLATE JAVASCRIPT
+   Handles preferences, shell injection, and settings dialog.
+
+   TABLE OF CONTENTS
+   -----------------------------------------------------------------
+   1. ENGINE CLEANUP ........... Hide SugarCube UI bar
+   2. PREFERENCE DEFAULTS ...... ★ Default font, size, theme, etc.
+   3. PREFERENCE UTILITIES ..... Read/write/apply pref classes
+   4. SETTINGS DIALOG .......... Builds the in-story settings UI
+   5. EXTERNAL ASSETS .......... Font Awesome, OpenDyslexic
+   6. PASSAGE LIFECYCLE ........ Apply prefs + inject shell markup
+   7. EVENT WIRING ............. Click handlers, startup hooks
+
+   ★ = Start here when adapting the template.
+
+   ============================================================= */
+
+
+/* =============================================================
+   1. ENGINE CLEANUP
+   -----------------------------------------------------------------
+   Removes the default SugarCube sidebar. CSS also hides it,
+   but this prevents any residual DOM or event overhead.
+   ============================================================= */
+
 UIBar.destroy();
 
-/* ---------------------------------------------------------
-   Default Preferences
-   --------------------------------------------------------- */
+
+/* =============================================================
+   2. PREFERENCE DEFAULTS
+   -----------------------------------------------------------------
+   ★ Edit these values to change what new readers see on first
+   load. The keys must match the radio button values in the
+   settings dialog (section 4) and the CSS class suffixes
+   in story.css (section 4 of that file).
+   ============================================================= */
+
 setup.defaultPrefs = {
-	theme: 'light',
-	font: 'sans',
-	textSize: 'medium',
-	lineHeight: 'relaxed'
+	theme:      'light',   /* 'light' | 'dark'                        */
+	font:       'sans',    /* 'sans'  | 'serif' | 'dyslexic'          */
+	textSize:   'medium',  /* 'small' | 'medium' | 'large'            */
+	lineHeight: 'relaxed'  /* 'normal'| 'relaxed'| 'spacious'         */
 };
 
-/* ---------------------------------------------------------
-   Navigation Helper
-   --------------------------------------------------------- */
-setup.goBack = function () {
-	if (State.length > 1) {
-		Engine.backward();
-	}
-};
 
-/* ---------------------------------------------------------
-   Preference Utilities
-   --------------------------------------------------------- */
+/* =============================================================
+   3. PREFERENCE UTILITIES
+   -----------------------------------------------------------------
+   These functions ensure prefs exist on the state, apply them
+   as body classes, and save/reset from the dialog. You should
+   not need to edit these unless you add a new preference.
+   ============================================================= */
+
+/* Ensure $prefs exists and has all keys (fills gaps with defaults) */
 setup.ensurePrefs = function () {
 	if (!State.variables.prefs) {
 		State.variables.prefs = Object.assign({}, setup.defaultPrefs);
@@ -1064,6 +1093,7 @@ setup.ensurePrefs = function () {
 	}
 };
 
+/* Sync body classes to current $prefs values */
 setup.applyPrefs = function () {
 	setup.ensurePrefs();
 
@@ -1083,6 +1113,7 @@ setup.applyPrefs = function () {
 	body.classList.add('line-' + prefs.lineHeight);
 };
 
+/* Read checked radios from the open dialog and save to $prefs */
 setup.savePrefsFromDialog = function () {
 	setup.ensurePrefs();
 
@@ -1091,19 +1122,21 @@ setup.savePrefsFromDialog = function () {
 		return el ? el.value : null;
 	};
 
-	State.variables.prefs.theme = checked('pref-theme') || setup.defaultPrefs.theme;
-	State.variables.prefs.font = checked('pref-font') || setup.defaultPrefs.font;
-	State.variables.prefs.textSize = checked('pref-size') || setup.defaultPrefs.textSize;
-	State.variables.prefs.lineHeight = checked('pref-line') || setup.defaultPrefs.lineHeight;
+	State.variables.prefs.theme      = checked('pref-theme')  || setup.defaultPrefs.theme;
+	State.variables.prefs.font       = checked('pref-font')   || setup.defaultPrefs.font;
+	State.variables.prefs.textSize   = checked('pref-size')   || setup.defaultPrefs.textSize;
+	State.variables.prefs.lineHeight = checked('pref-line')    || setup.defaultPrefs.lineHeight;
 
 	setup.applyPrefs();
 };
 
+/* Restore defaults and reapply */
 setup.resetPrefs = function () {
 	State.variables.prefs = Object.assign({}, setup.defaultPrefs);
 	setup.applyPrefs();
 };
 
+/* Helper: build one radio input for the settings panel */
 setup.settingsRadio = function (groupName, value, labelText, currentValue) {
 	var checked = value === currentValue ? ' checked' : '';
 	return (
@@ -1114,9 +1147,22 @@ setup.settingsRadio = function (groupName, value, labelText, currentValue) {
 	);
 };
 
-/* ---------------------------------------------------------
-   Settings Dialog
-   --------------------------------------------------------- */
+/* Navigation: go back one turn */
+setup.goBack = function () {
+	if (State.length > 1) {
+		Engine.backward();
+	}
+};
+
+
+/* =============================================================
+   4. SETTINGS DIALOG
+   -----------------------------------------------------------------
+   Builds the accessibility settings panel inside a SugarCube
+   dialog. If you add a new preference (e.g. animation toggle),
+   add a fieldset here and a matching CSS class in story.css.
+   ============================================================= */
+
 setup.openSettings = function () {
 	setup.ensurePrefs();
 	var prefs = State.variables.prefs;
@@ -1127,28 +1173,28 @@ setup.openSettings = function () {
 			'<fieldset>' +
 				'<legend>Theme</legend>' +
 				setup.settingsRadio('pref-theme', 'light', 'Light', prefs.theme) +
-				setup.settingsRadio('pref-theme', 'dark', 'Dark', prefs.theme) +
+				setup.settingsRadio('pref-theme', 'dark',  'Dark',  prefs.theme) +
 			'</fieldset>' +
 
 			'<fieldset>' +
 				'<legend>Font</legend>' +
-				setup.settingsRadio('pref-font', 'sans', 'Sans-serif', prefs.font) +
-				setup.settingsRadio('pref-font', 'serif', 'Serif', prefs.font) +
-				setup.settingsRadio('pref-font', 'dyslexic', 'OpenDyslexic', prefs.font) +
+				setup.settingsRadio('pref-font', 'sans',     'Sans-serif',    prefs.font) +
+				setup.settingsRadio('pref-font', 'serif',    'Serif',         prefs.font) +
+				setup.settingsRadio('pref-font', 'dyslexic', 'OpenDyslexic',  prefs.font) +
 			'</fieldset>' +
 
 			'<fieldset>' +
 				'<legend>Text size</legend>' +
-				setup.settingsRadio('pref-size', 'small', 'Small', prefs.textSize) +
+				setup.settingsRadio('pref-size', 'small',  'Small',  prefs.textSize) +
 				setup.settingsRadio('pref-size', 'medium', 'Medium', prefs.textSize) +
-				setup.settingsRadio('pref-size', 'large', 'Large', prefs.textSize) +
+				setup.settingsRadio('pref-size', 'large',  'Large',  prefs.textSize) +
 			'</fieldset>' +
 
 			'<fieldset>' +
 				'<legend>Line spacing</legend>' +
-				setup.settingsRadio('pref-line', 'normal', 'Normal', prefs.lineHeight) +
+				setup.settingsRadio('pref-line', 'normal',  'Normal',  prefs.lineHeight) +
 				setup.settingsRadio('pref-line', 'relaxed', 'Relaxed', prefs.lineHeight) +
-				setup.settingsRadio('pref-line', 'spacious', 'Spacious', prefs.lineHeight) +
+				setup.settingsRadio('pref-line', 'spacious','Spacious',prefs.lineHeight) +
 			'</fieldset>' +
 
 			'<div class="settings-actions">' +
@@ -1161,13 +1207,12 @@ setup.openSettings = function () {
 	Dialog.wiki(html);
 	Dialog.open();
 
+	/* Wire dialog buttons after DOM renders */
 	setTimeout(function () {
 		var firstInput = document.querySelector('.settings-panel input[type="radio"]');
-		if (firstInput) {
-			firstInput.focus();
-		}
+		if (firstInput) { firstInput.focus(); }
 
-		var saveBtn = document.getElementById('settings-save');
+		var saveBtn  = document.getElementById('settings-save');
 		var resetBtn = document.getElementById('settings-reset');
 
 		if (saveBtn) {
@@ -1186,24 +1231,15 @@ setup.openSettings = function () {
 	}, 0);
 };
 
-/* ---------------------------------------------------------
-   Global Escape Key Handler
-   --------------------------------------------------------- */
-$(document).off('keydown.dialogEsc').on('keydown.dialogEsc', function (ev) {
-	if (ev.key === 'Escape') {
-		try {
-			Dialog.close();
-		} catch (e) {
-			/* Do nothing if no dialog is open */
-		}
-	}
-});
 
-/* ---------------------------------------------------------
-   Load External Stylesheets
-   --------------------------------------------------------- */
+/* =============================================================
+   5. EXTERNAL ASSETS
+   -----------------------------------------------------------------
+   Loads Font Awesome (for choice icons and settings button)
+   and OpenDyslexic (for the dyslexia-friendly font option).
+   Replace URLs here if you host these locally.
+   ============================================================= */
 
-/* Font Awesome */
 (function () {
 	var fa = document.createElement('link');
 	fa.rel = 'stylesheet';
@@ -1212,7 +1248,6 @@ $(document).off('keydown.dialogEsc').on('keydown.dialogEsc', function (ev) {
 	document.head.appendChild(fa);
 })();
 
-/* OpenDyslexic */
 (function () {
 	var fontLink = document.createElement('link');
 	fontLink.rel = 'stylesheet';
@@ -1220,42 +1255,47 @@ $(document).off('keydown.dialogEsc').on('keydown.dialogEsc', function (ev) {
 	document.head.appendChild(fontLink);
 })();
 
-/* ---------------------------------------------------------
-   Apply Preferences on EVERY Passage
-   This runs before the shell injection so body classes
-   are always current, even on noshell-tagged passages.
-   --------------------------------------------------------- */
+
+/* =============================================================
+   6. PASSAGE LIFECYCLE
+   -----------------------------------------------------------------
+   Two handlers that run on every passage transition:
+
+   :passagestart — Applies preference body classes. Runs for
+     ALL passages (including noshell) so the theme never drops.
+
+   :passagerender — Injects the split-panel shell markup into
+     passages that are NOT tagged 'noshell'. If you change the
+     shell HTML structure, edit it here.
+   ============================================================= */
+
+/* Apply prefs on every passage (before render) */
 $(document).on(':passagestart', function () {
 	setup.ensurePrefs();
 	setup.applyPrefs();
 });
 
-/* ---------------------------------------------------------
-   Shared Passage Shell Injection
-   Only runs for passages NOT tagged 'noshell'.
-   --------------------------------------------------------- */
+/* Inject shell into non-noshell passages */
 $(document).on(':passagerender', function (ev) {
 	var passageEl = ev.content;
-	if (!passageEl) {
-		return;
-	}
+	if (!passageEl) { return; }
 
 	var passageObj = Story.get(State.passage);
 	var tags = passageObj ? passageObj.tags : [];
 
-	if (tags.includes('noshell')) {
-		return;
-	}
+	/* Skip shell for noshell-tagged passages (intro, recap, etc.) */
+	if (tags.includes('noshell')) { return; }
 
-	if (passageEl.querySelector('.story-shell')) {
-		return;
-	}
+	/* Guard against double-injection */
+	if (passageEl.querySelector('.story-shell')) { return; }
 
+	/* Move existing passage content into a fragment */
 	var originalContent = document.createDocumentFragment();
 	while (passageEl.firstChild) {
 		originalContent.appendChild(passageEl.firstChild);
 	}
 
+	/* Build shell */
 	var shell = document.createElement('div');
 	shell.className = 'story-shell';
 
@@ -1279,8 +1319,8 @@ $(document).on(':passagerender', function (ev) {
 			'</div>' +
 		'</div>';
 
-	var titleEl = shell.querySelector('.story-title');
-	titleEl.textContent = State.variables.uiTitle || '';
+	/* Populate left panel */
+	shell.querySelector('.story-title').textContent = State.variables.uiTitle || '';
 
 	var imageWrap = shell.querySelector('.story-image-wrap');
 	var imgSrc = State.variables.uiImage || '';
@@ -1298,8 +1338,10 @@ $(document).on(':passagerender', function (ev) {
 		imageWrap.appendChild(placeholder);
 	}
 
+	/* Insert passage content into right panel */
 	shell.querySelector('.passage-text').appendChild(originalContent);
 
+	/* Back button (if there's history) */
 	if (State.length > 1) {
 		var backBtn = document.createElement('button');
 		backBtn.className = 'ui-btn';
@@ -1309,6 +1351,7 @@ $(document).on(':passagerender', function (ev) {
 		shell.querySelector('.bottom-controls').appendChild(backBtn);
 	}
 
+	/* Settings button */
 	var settingsBtn = shell.querySelector('.settings-button');
 	if (settingsBtn) {
 		settingsBtn.addEventListener('click', setup.openSettings);
@@ -1317,17 +1360,27 @@ $(document).on(':passagerender', function (ev) {
 	passageEl.appendChild(shell);
 });
 
-/* ---------------------------------------------------------
-   Global Settings Button Handlers (for noshell pages)
-   --------------------------------------------------------- */
+
+/* =============================================================
+   7. EVENT WIRING
+   -----------------------------------------------------------------
+   Global event handlers that aren't tied to a specific passage.
+   ============================================================= */
+
+/* Settings button on noshell pages (delegated) */
 $(document).off('click.noshellSettings', '.noshell-settings-button')
 	.on('click.noshellSettings', '.noshell-settings-button', function () {
 		setup.openSettings();
 	});
 
-/* ---------------------------------------------------------
-   Apply Preferences on Story Startup
-   --------------------------------------------------------- */
+/* Escape key closes any open dialog */
+$(document).off('keydown.dialogEsc').on('keydown.dialogEsc', function (ev) {
+	if (ev.key === 'Escape') {
+		try { Dialog.close(); } catch (e) { /* no dialog open */ }
+	}
+});
+
+/* Apply prefs once on initial story load */
 $(document).on(':storyready', function () {
 	setup.ensurePrefs();
 	setup.applyPrefs();
@@ -1425,20 +1478,17 @@ $(document).on(':storyready', function () {
 &lt;p&gt;Alex sits down and takes a shaky breath. After a long pause, they say:&lt;/p&gt;
 &lt;blockquote&gt;&quot;I came out to my parents this weekend — told them I&#39;m nonbinary. They said I&#39;m confused and not to come home for the holidays. I don&#39;t know why I even bother. Maybe everyone would be better off without me.&quot;&lt;/blockquote&gt;
 &lt;p&gt;This is your first moment with Alex. How do you respond?&lt;/p&gt;
-
 &lt;div class=&quot;choices&quot;&gt;
 	&lt;&lt;link &quot;\&quot;That sounds incredibly painful. When you say everyone would be better off without you — can you tell me more about what you mean by that?\&quot;&quot; &quot;Scene1_Feedback&quot;&gt;&gt;
 		&lt;&lt;set $choice1 to &quot;Validated feelings, then gently explored the safety concern&quot;&gt;&gt;
 		&lt;&lt;set $choice1quality to &quot;strong&quot;&gt;&gt;
 		&lt;&lt;set $choice1feedback to &quot;You acknowledged Alex&#39;s pain first, which builds trust, then moved toward assessing safety without making it feel like an interrogation. This approach honors the emotional context while taking the concerning statement seriously.&quot;&gt;&gt;
 	&lt;&lt;/link&gt;&gt;
-
 	&lt;&lt;link &quot;\&quot;I need to ask you directly — are you thinking about hurting yourself or ending your life?\&quot;&quot; &quot;Scene1_Feedback&quot;&gt;&gt;
 		&lt;&lt;set $choice1 to &quot;Moved directly to suicide risk assessment&quot;&gt;&gt;
 		&lt;&lt;set $choice1quality to &quot;adequate&quot;&gt;&gt;
 		&lt;&lt;set $choice1feedback to &quot;Directly assessing suicide risk is clinically appropriate and shows you take safety seriously. However, leading with the assessment before acknowledging Alex&#39;s pain can feel abrupt and may signal that you&#39;re more focused on protocol than on them as a person. Alex may shut down or minimize.&quot;&gt;&gt;
 	&lt;&lt;/link&gt;&gt;
-
 	&lt;&lt;link &quot;\&quot;Coming out is so brave. Your parents just need time — I&#39;m sure they&#39;ll come around.\&quot;&quot; &quot;Scene1_Feedback&quot;&gt;&gt;
 		&lt;&lt;set $choice1 to &quot;Offered reassurance about the family situation&quot;&gt;&gt;
 		&lt;&lt;set $choice1quality to &quot;concerning&quot;&gt;&gt;
@@ -1446,24 +1496,20 @@ $(document).on(':storyready', function () {
 	&lt;&lt;/link&gt;&gt;
 &lt;/div&gt;</tw-passagedata><tw-passagedata pid="5" name="Scene1_Feedback" tags="" position="400,500" size="100,100">/* Show what the counselor said */
 &lt;p class=&quot;counselor-response&quot;&gt;&lt;strong&gt;You chose:&lt;/strong&gt; &lt;&lt;print $choice1&gt;&gt;.&lt;/p&gt;
-
 /* Show Alex&#39;s reaction based on quality */
 &lt;&lt;if $choice1quality is &quot;strong&quot;&gt;&gt;
 &lt;p&gt;Alex&#39;s eyes fill with tears, but they look up at you for the first time.&lt;/p&gt;
 &lt;blockquote&gt;&quot;I… I don&#39;t know. I&#39;m not saying I&#39;d do anything. But last night I was just lying there thinking, what&#39;s the point? If my own parents don&#39;t want me, then…&quot; They trail off. &quot;I just feel really alone.&quot;&lt;/blockquote&gt;
 &lt;p&gt;Alex is opening up. The validation made space for them to be honest about what they&#39;re feeling without being put on the defensive.&lt;/p&gt;
-
 &lt;&lt;elseif $choice1quality is &quot;adequate&quot;&gt;&gt;
 &lt;p&gt;Alex stiffens slightly and looks at the floor.&lt;/p&gt;
 &lt;blockquote&gt;&quot;I mean… no. Not really. I&#39;m not going to do anything. I&#39;m just upset.&quot;&lt;/blockquote&gt;
 &lt;p&gt;Alex&#39;s response is clipped. They may be minimizing, or they may genuinely not be at acute risk — but the abruptness of the question made it harder to tell. You&#39;ll need to circle back to build more rapport before you can get a fuller picture.&lt;/p&gt;
-
 &lt;&lt;elseif $choice1quality is &quot;concerning&quot;&gt;&gt;
 &lt;p&gt;Alex stares at you for a moment, then looks away.&lt;/p&gt;
 &lt;blockquote&gt;&quot;Yeah. Sure. Time.&quot;&lt;/blockquote&gt;
 &lt;p&gt;The conversation has stalled. Alex seems to have pulled back, and the concerning statement has gone unaddressed. You&#39;ll need to work harder to rebuild trust and return to the safety concern.&lt;/p&gt;
 &lt;&lt;/if&gt;&gt;
-
 /* Inline teaching note */
 &lt;div class=&quot;feedback-note&quot;&gt;
 	&lt;p class=&quot;feedback-summary&quot;&gt;
@@ -1494,11 +1540,9 @@ $(document).on(':storyready', function () {
 		&lt;/div&gt;
 	&lt;/details&gt;
 &lt;/div&gt;
-
 &lt;div class=&quot;choices&quot;&gt;
 	[[Continue Session|Scene2]]
 &lt;/div&gt;</tw-passagedata><tw-passagedata pid="6" name="Scene2" tags="" position="500,700" size="100,100">&lt;p class=&quot;scene-label&quot;&gt;Decision Point 2: Addressing Identity&lt;/p&gt;
-
 &lt;&lt;if $choice1quality is &quot;strong&quot;&gt;&gt;
 &lt;p&gt;Alex has been talking more openly. They describe feeling like they have to &quot;pick between being myself and having a family.&quot; They mention that they&#39;ve been using they/them pronouns for about a year, but their parents refused to use them.&lt;/p&gt;
 &lt;&lt;elseif $choice1quality is &quot;adequate&quot;&gt;&gt;
@@ -1508,43 +1552,36 @@ $(document).on(':storyready', function () {
 &lt;&lt;/if&gt;&gt;
 &lt;blockquote&gt;&quot;They kept saying &#39;this nonbinary thing&#39; like it&#39;s a phase. My mom said, &#39;We didn&#39;t raise you to be this.&#39; I know they&#39;re from a different generation, but… it still hurts.&quot;&lt;/blockquote&gt;
 &lt;p&gt;Alex has brought their identity into the conversation directly. How do you engage with this?&lt;/p&gt;
-
 &lt;div class=&quot;choices&quot;&gt;
 	&lt;&lt;link &quot;\&quot;It makes sense that it hurts. Your identity isn&#39;t a phase, and being dismissed by people you love is a real loss. What does their reaction mean for how you see yourself right now?\&quot;&quot; &quot;Scene2_Feedback&quot;&gt;&gt;
 		&lt;&lt;set $choice2 to &quot;Affirmed identity, named the loss, and explored Alex&#39;s self-concept&quot;&gt;&gt;
 		&lt;&lt;set $choice2quality to &quot;strong&quot;&gt;&gt;
 		&lt;&lt;set $choice2feedback to &quot;You validated Alex&#39;s identity clearly and without hedging, named the emotional experience as grief/loss, and then turned the focus back to Alex&#39;s internal world — all without pathologizing the parents or centering yourself.&quot;&gt;&gt;
 	&lt;&lt;/link&gt;&gt;
-
 	&lt;&lt;link &quot;\&quot;It sounds like your parents are struggling with this. Sometimes it helps to think about where they&#39;re coming from — generational differences can be hard to bridge.\&quot;&quot; &quot;Scene2_Feedback&quot;&gt;&gt;
 		&lt;&lt;set $choice2 to &quot;Reframed the situation around the parents&#39; perspective&quot;&gt;&gt;
 		&lt;&lt;set $choice2quality to &quot;concerning&quot;&gt;&gt;
 		&lt;&lt;set $choice2feedback to &quot;While understanding family dynamics is valuable later in treatment, centering the parents&#39; perspective in this moment risks communicating that Alex should accommodate their rejection. Alex already offered the &#39;different generation&#39; frame themselves — echoing it back can feel like you&#39;re siding with the parents.&quot;&gt;&gt;
 	&lt;&lt;/link&gt;&gt;
-
 	&lt;&lt;link &quot;\&quot;I want to make sure I&#39;m getting this right — you use they/them pronouns and identify as nonbinary. Can you tell me more about what that means for you?\&quot;&quot; &quot;Scene2_Feedback&quot;&gt;&gt;
 		&lt;&lt;set $choice2 to &quot;Asked Alex to explain their identity&quot;&gt;&gt;
 		&lt;&lt;set $choice2quality to &quot;adequate&quot;&gt;&gt;
 		&lt;&lt;set $choice2feedback to &quot;Confirming pronouns is respectful, and curiosity about a client&#39;s experience can be affirming. But in a crisis session, asking Alex to educate you about what nonbinary &#39;means for them&#39; can feel like an extra burden — especially when they just told you their parents dismissed that very identity.&quot;&gt;&gt;
 	&lt;&lt;/link&gt;&gt;
 &lt;/div&gt;</tw-passagedata><tw-passagedata pid="7" name="Scene2_Feedback" tags="" position="600,700" size="100,100">&lt;p class=&quot;counselor-response&quot;&gt;&lt;strong&gt;You chose:&lt;/strong&gt; &lt;&lt;print $choice2&gt;&gt;.&lt;/p&gt;
-
 &lt;&lt;if $choice2quality is &quot;strong&quot;&gt;&gt;
 &lt;p&gt;Alex is quiet for a moment, then nods slowly.&lt;/p&gt;
 &lt;blockquote&gt;&quot;Honestly? I felt so solid about who I am when I&#39;m at school. My friends use my pronouns, my RA is great. But after this weekend… I keep hearing my mom&#39;s voice. Like maybe I &lt;em&gt;am&lt;/em&gt; just confused.&quot; They pause. &quot;I don&#39;t want to believe that. But it&#39;s hard not to when your own parents say it.&quot;&lt;/blockquote&gt;
 &lt;p&gt;Alex is doing real therapeutic work here — articulating the tension between their own self-knowledge and the impact of family rejection. Your affirmation made it safe to voice the doubt without fear that you&#39;d agree with it.&lt;/p&gt;
-
 &lt;&lt;elseif $choice2quality is &quot;concerning&quot;&gt;&gt;
 &lt;p&gt;Alex&#39;s jaw tightens.&lt;/p&gt;
 &lt;blockquote&gt;&quot;I &lt;em&gt;know&lt;/em&gt; where they&#39;re coming from. I&#39;ve been making excuses for them my whole life. I thought coming here would be different.&quot;&lt;/blockquote&gt;
 &lt;p&gt;Alex feels like you&#39;ve aligned with their parents. The phrase &quot;I thought coming here would be different&quot; is a direct signal that the therapeutic relationship is at risk. You&#39;ll need to repair this rupture.&lt;/p&gt;
-
 &lt;&lt;elseif $choice2quality is &quot;adequate&quot;&gt;&gt;
 &lt;p&gt;Alex gives you a tired look.&lt;/p&gt;
 &lt;blockquote&gt;&quot;I mean… I&#39;m nonbinary. I use they/them. That&#39;s what it means.&quot; They sigh. &quot;Sorry, I&#39;m not trying to be rude. I just — I&#39;ve explained this so many times.&quot;&lt;/blockquote&gt;
 &lt;p&gt;Alex isn&#39;t angry at you specifically, but they&#39;re experiencing identity fatigue. In a crisis moment, they needed you to demonstrate understanding, not ask them to teach.&lt;/p&gt;
 &lt;&lt;/if&gt;&gt;
-
 &lt;div class=&quot;feedback-note&quot;&gt;
 	&lt;p class=&quot;feedback-summary&quot;&gt;
 		&lt;&lt;if $choice2quality is &quot;strong&quot;&gt;&gt;
@@ -1575,11 +1612,9 @@ $(document).on(':storyready', function () {
 		&lt;/div&gt;
 	&lt;/details&gt;
 &lt;/div&gt;
-
 &lt;div class=&quot;choices&quot;&gt;
 	[[Continue Session|Scene3]]
 &lt;/div&gt;</tw-passagedata><tw-passagedata pid="8" name="Scene3" tags="" position="700,900" size="100,100">&lt;p class=&quot;scene-label&quot;&gt;Decision Point 3: Safety Planning&lt;/p&gt;
-
 &lt;&lt;if $choice1quality is &quot;strong&quot; and $choice2quality is &quot;strong&quot;&gt;&gt;
 &lt;p&gt;The session has developed a strong therapeutic rhythm. Alex has shared more about their support system — a few close friends, an LGBTQ+ student group they attend sometimes, and their RA. They also acknowledge they&#39;ve been isolating more over the past week.&lt;/p&gt;
 &lt;&lt;elseif $choice1quality is &quot;concerning&quot; or $choice2quality is &quot;concerning&quot;&gt;&gt;
@@ -1590,44 +1625,37 @@ $(document).on(':storyready', function () {
 &lt;p&gt;You&#39;ve assessed that Alex is not at imminent risk but does have passive suicidal ideation. It&#39;s time to discuss safety planning. Alex says:&lt;/p&gt;
 &lt;blockquote&gt;&quot;I know you probably have to do the whole &#39;safety plan&#39; thing. I&#39;ve done this before at my last therapist. It felt really generic — like, &#39;call a hotline.&#39; I never would.&quot;&lt;/blockquote&gt;
 &lt;p&gt;How do you approach the safety plan?&lt;/p&gt;
-
 &lt;div class=&quot;choices&quot;&gt;
 	&lt;&lt;link &quot;\&quot;I hear you — a safety plan should actually feel useful to you, not like a checklist. Let&#39;s build one together based on what actually helps when you&#39;re in that dark place. Who or what has gotten you through hard nights before?\&quot;&quot; &quot;Scene3_Feedback&quot;&gt;&gt;
 		&lt;&lt;set $choice3 to &quot;Collaborated on a personalized, client-centered safety plan&quot;&gt;&gt;
 		&lt;&lt;set $choice3quality to &quot;strong&quot;&gt;&gt;
 		&lt;&lt;set $choice3feedback to &quot;You validated Alex&#39;s past experience, reframed the safety plan as something collaborative and personalized, and asked about existing coping and support — centering their expertise on their own life.&quot;&gt;&gt;
 	&lt;&lt;/link&gt;&gt;
-
 	&lt;&lt;link &quot;\&quot;I understand it can feel generic, but safety plans save lives. Let&#39;s go through the steps — we&#39;ll list warning signs, coping strategies, people you can contact, and professionals to call.\&quot;&quot; &quot;Scene3_Feedback&quot;&gt;&gt;
 		&lt;&lt;set $choice3 to &quot;Proceeded with a standard safety plan protocol&quot;&gt;&gt;
 		&lt;&lt;set $choice3quality to &quot;adequate&quot;&gt;&gt;
 		&lt;&lt;set $choice3feedback to &quot;Safety plans are evidence-based and important. However, Alex just told you the standard approach felt unhelpful before. Proceeding with the same format without adapting to their feedback misses an opportunity to make the plan something they&#39;d actually use.&quot;&gt;&gt;
 	&lt;&lt;/link&gt;&gt;
-
 	&lt;&lt;link &quot;\&quot;You&#39;ve done this before, so I trust your judgment. If you don&#39;t think you need a formal safety plan, we can skip it and just check in next session.\&quot;&quot; &quot;Scene3_Feedback&quot;&gt;&gt;
 		&lt;&lt;set $choice3 to &quot;Deferred to the client and skipped the safety plan&quot;&gt;&gt;
 		&lt;&lt;set $choice3quality to &quot;concerning&quot;&gt;&gt;
 		&lt;&lt;set $choice3feedback to &quot;Respecting client autonomy is important, but a client with passive suicidal ideation who is experiencing a crisis does need a safety plan — even if the previous one felt unhelpful. Skipping it entirely is a clinical risk management concern.&quot;&gt;&gt;
 	&lt;&lt;/link&gt;&gt;
 &lt;/div&gt;</tw-passagedata><tw-passagedata pid="9" name="Scene3_Feedback" tags="" position="800,900" size="100,100">&lt;p class=&quot;counselor-response&quot;&gt;&lt;strong&gt;You chose:&lt;/strong&gt; &lt;&lt;print $choice3&gt;&gt;.&lt;/p&gt;
-
 &lt;&lt;if $choice3quality is &quot;strong&quot;&gt;&gt;
 &lt;p&gt;Alex uncrosses their arms for the first time in the session.&lt;/p&gt;
 &lt;blockquote&gt;&quot;Okay… yeah. Honestly? My friend Jade — she&#39;s in the queer student group with me. She&#39;s kind of the person I text when things get bad. And sometimes I just put on this one playlist and lie on the floor. That sounds weird, but it helps.&quot;&lt;/blockquote&gt;
 &lt;p&gt;You write these down together. Alex adds their RA and the campus counseling center&#39;s after-hours line — not because you told them to, but because the collaborative process made space for them to think about what actually works. You also discuss what warning signs look like specifically for Alex (isolating, skipping the student group, not eating).&lt;/p&gt;
 &lt;blockquote&gt;&quot;This actually feels different from last time. Like it&#39;s actually &lt;em&gt;mine&lt;/em&gt;.&quot;&lt;/blockquote&gt;
-
 &lt;&lt;elseif $choice3quality is &quot;adequate&quot;&gt;&gt;
 &lt;p&gt;Alex participates, but with low energy.&lt;/p&gt;
 &lt;blockquote&gt;&quot;Okay. Warning signs… I guess when I stop going to class. Coping strategies… I don&#39;t know, music? People to call…&quot; They hesitate. &quot;I&#39;m not going to call a hotline. I&#39;ve heard bad things about how they handle trans people.&quot;&lt;/blockquote&gt;
 &lt;p&gt;You complete the plan, but Alex&#39;s concern about hotlines is important — and valid. Some crisis lines have historically been less competent with LGBTQ+ callers. This was an opportunity to offer specific affirming resources (like the Trevor Project or Trans Lifeline) rather than generic ones.&lt;/p&gt;
-
 &lt;&lt;elseif $choice3quality is &quot;concerning&quot;&gt;&gt;
 &lt;p&gt;Alex looks relieved — but that relief may be about avoiding a difficult conversation, not about actually being safe.&lt;/p&gt;
 &lt;blockquote&gt;&quot;Yeah, okay. I&#39;ll be fine. I&#39;ll see you next week, I guess.&quot;&lt;/blockquote&gt;
 &lt;p&gt;Without a safety plan, there is no documented framework for Alex to use if they experience escalating ideation between now and the next session. You also have no shared language for what &quot;warning signs&quot; look like for Alex specifically, and no agreed-upon steps for them to take. This is a gap in duty of care.&lt;/p&gt;
 &lt;&lt;/if&gt;&gt;
-
 &lt;div class=&quot;feedback-note&quot;&gt;
 	&lt;p class=&quot;feedback-summary&quot;&gt;
 		&lt;&lt;if $choice3quality is &quot;strong&quot;&gt;&gt;
@@ -1658,7 +1686,6 @@ $(document).on(':storyready', function () {
 		&lt;/div&gt;
 	&lt;/details&gt;
 &lt;/div&gt;
-
 &lt;div class=&quot;choices&quot;&gt;
 	[[Proceed to Session Debrief|Recap]]
 &lt;/div&gt;</tw-passagedata><tw-passagedata pid="10" name="Recap" tags="noshell" position="300,1100" size="100,100">&lt;!-- Recap passage (noshell tag) --&gt;
@@ -1666,10 +1693,8 @@ $(document).on(':storyready', function () {
 	&lt;div class=&quot;noshell-card noshell-card-wide&quot;&gt;
 		&lt;h1&gt;Session Debrief&lt;/h1&gt;
 		&lt;p&gt;Here&#39;s how your clinical decisions shaped the session:&lt;/p&gt;
-
 		&lt;!-- Decision cards --&gt;
 		&lt;div class=&quot;recap-decisions&quot;&gt;
-
 			&lt;div class=&quot;recap-decision-card&quot; data-quality=&quot;&lt;&lt;print $choice1quality&gt;&gt;&quot;&gt;
 				&lt;p class=&quot;recap-decision-num&quot;&gt;Decision 1&lt;/p&gt;
 				&lt;p class=&quot;recap-decision-title&quot;&gt;Initial Response to Crisis Statement&lt;/p&gt;
@@ -1681,7 +1706,6 @@ $(document).on(':storyready', function () {
 					&lt;&lt;/if&gt;&gt;
 				&lt;/span&gt;
 			&lt;/div&gt;
-
 			&lt;div class=&quot;recap-decision-card&quot; data-quality=&quot;&lt;&lt;print $choice2quality&gt;&gt;&quot;&gt;
 				&lt;p class=&quot;recap-decision-num&quot;&gt;Decision 2&lt;/p&gt;
 				&lt;p class=&quot;recap-decision-title&quot;&gt;Engaging with Alex&#39;s Identity&lt;/p&gt;
@@ -1693,7 +1717,6 @@ $(document).on(':storyready', function () {
 					&lt;&lt;/if&gt;&gt;
 				&lt;/span&gt;
 			&lt;/div&gt;
-
 			&lt;div class=&quot;recap-decision-card&quot; data-quality=&quot;&lt;&lt;print $choice3quality&gt;&gt;&quot;&gt;
 				&lt;p class=&quot;recap-decision-num&quot;&gt;Decision 3&lt;/p&gt;
 				&lt;p class=&quot;recap-decision-title&quot;&gt;Safety Planning&lt;/p&gt;
@@ -1705,16 +1728,13 @@ $(document).on(':storyready', function () {
 					&lt;&lt;/if&gt;&gt;
 				&lt;/span&gt;
 			&lt;/div&gt;
-
 		&lt;/div&gt;
-
 		&lt;h2&gt;Key Takeaways&lt;/h2&gt;
 		&lt;ul&gt;
 			&lt;li&gt;&lt;strong&gt;Safety and identity are intertwined.&lt;/strong&gt; For LGBTQ+ clients, crisis response cannot be separated from identity affirmation. Family rejection is a clinical risk factor, not just a family conflict.&lt;/li&gt;
 			&lt;li&gt;&lt;strong&gt;Timing and sequence matter.&lt;/strong&gt; Validation before assessment, affirmation before exploration, collaboration before protocol. The order communicates your priorities.&lt;/li&gt;
 			&lt;li&gt;&lt;strong&gt;Cultural competence is not just knowledge — it&#39;s practice.&lt;/strong&gt; Knowing that LGBTQ+ youth face elevated risk is different from being able to respond to a specific person in a specific moment with skill and care.&lt;/li&gt;
 		&lt;/ul&gt;
-
 		&lt;details class=&quot;recap-collapsible&quot;&gt;
 			&lt;summary&gt;Further Reading&lt;/summary&gt;
 			&lt;ul&gt;
@@ -1724,7 +1744,6 @@ $(document).on(':storyready', function () {
 				&lt;li&gt;APA (2021). &lt;em&gt;Guidelines for Psychological Practice with Sexual Minority Persons.&lt;/em&gt;&lt;/li&gt;
 			&lt;/ul&gt;
 		&lt;/details&gt;
-
 		&lt;div class=&quot;noshell-actions&quot;&gt;
 			[[Restart|Intro]]
 		&lt;/div&gt;
